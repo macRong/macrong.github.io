@@ -1,4 +1,3 @@
 source "https://rubygems.org"
-
 gem "github-pages", group: :jekyll_plugins
-gem "webrick", "~> 1.7"   # Ruby 3+ 需要
+gem "minima"  # 显式声明 Minima 主题
