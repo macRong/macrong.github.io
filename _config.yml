@@ -28,13 +28,19 @@ minima:
   cover_image: /assets/images/default-cover.jpg  # 文章默认封面图路径
   skin: classic     # 主题皮肤（可选：classic/default、dark、solarized-light）https://jekyll.github.io/minima/
 
-social_links:     # 页脚显示的社交媒体链接
-  - { platform: github,  user_url: "https://github.com/macRong" }
-  - { platform: twitter, user_url: "https://x.com/colinluckyrong" }
+# social_links:     # 页脚显示的社交媒体链接
+#   - { platform: github,  user_url: "https://github.com/macRong" }
+#   - { platform: twitter, user_url: "https://x.com/colinluckyrong" }
+#   - { platform: rss, user_url: "https://macrong.github.io/feed.xml" }
+
+
+# _config.yml
+social_links:
+  - { platform: github, user_url: "https://github.com/macRong" }
+  - { platform: twitter, user_url: "https://twitter.com/colinluckyrong" }  # X（原Twitter）
   - { platform: rss, user_url: "https://macrong.github.io/feed.xml" }
-
-
-
+  # 可添加其他平台
+  - { platform: linkedin, user_url: "https://linkedin.com/in/你的用户名" }
 
 
 # 启用的插件（GitHub Pages 已内置支持）
