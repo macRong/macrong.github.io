@@ -1,7 +1,7 @@
-# theme: minima  # 使用本地安装的 Minima 主题
+theme: minima  # 使用本地安装的 Minima 主题
 
 # _config.yml
-remote_theme: jekyll/minima@v3.0.0  # 注意添加 'v' 前缀
+# remote_theme: jekyll/minima@v3.0.0  # 注意添加 'v' 前缀
 
 # 站点基本信息
 title: "macRong's blog"         # 显示在浏览器标签和首页顶部
