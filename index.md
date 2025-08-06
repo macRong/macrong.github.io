@@ -1,10 +1,9 @@
 ---
 layout: home
-title: 首页
 ---
 
 <!-- 保留主题默认的文章列表渲染 -->
-{{ content }}
+<!-- {{ content }} -->
 
 <!-- 直接使用 Minima 主题自带的文章循环逻辑 -->
 <ul class="post-list">
