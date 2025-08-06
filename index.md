@@ -25,8 +25,3 @@ layout: home  # 使用首页布局
 - [Twitter](https://twitter.com/yourhandle)
 - [blog](https://macrong.github.io/macRong/)
 
----
-
-Made with Colin using [GitHub Pages](https://pages.github.com),visit
-
-
