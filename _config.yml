@@ -17,6 +17,7 @@ author:
 # 导航菜单（顶部导航栏显示的页面）
 header_pages:
   - archive.md      # 归档页（需手动创建）
+  - product.md       
   - about.md        # 关于页
 
 # 分页设置（首页每页显示的文章数量）

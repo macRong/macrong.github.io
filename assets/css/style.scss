@@ -1,10 +1,7 @@
 ---
 ---
 
-@import
- "minima/skins/{{ site.minima.skin | default: 'classic' }}",
- "minima/initialize";
-
+@import "minima";
 
 /* 调整导航项间距 */
 .site-nav .trigger {
@@ -18,7 +15,7 @@
   /* 移除默认可能的选中样式，如背景色 */
   background-color: transparent;
   /* 可选：添加自定义选中效果，如下划线 */
-  border-bottom: 2px solid #040404; /* 与主题强调色匹配 */
+  border-bottom: 2px solid #404040; /* 修正为标准十六进制颜色值 */
   padding-bottom: 0.25rem; /* 下划线与文字的距离 */
 }
 
