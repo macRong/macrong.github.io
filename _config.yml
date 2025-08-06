@@ -31,18 +31,10 @@ minima:
 social_links:     # 页脚显示的社交媒体链接
   - { platform: github,  user_url: "https://github.com/macRong" }
   - { platform: twitter, user_url: "https://x.com/colinluckyrong" }
-   - { platform: rss, user_url: "https://macrong.github.io/feed.xml" }
+  - { platform: rss, user_url: "https://macrong.github.io/feed.xml" }
 
 
 
-
-social_links:
-    - title: Minima Theme repository at GitHub
-      icon: github
-      url: "https://github.com/jekyll/minima"
-    - title: Jekyll at X (formerly Twitter)
-      icon: x-twitter
-      url: "https://x.com/jekyllrb"
 
 
 # 启用的插件（GitHub Pages 已内置支持）
