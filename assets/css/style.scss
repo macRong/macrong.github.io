@@ -1,12 +1,9 @@
 ---
-# Only the main Sass file needs front matter (the dashes are enough)
 ---
 
 @import "minima";
 
-
-
-  /* 调整导航项间距 */
+/* 调整导航项间距 */
 .site-nav .trigger {
   display: flex;
   gap: 2rem; /* 导航项之间的距离，可根据需要调整 */
@@ -27,8 +24,6 @@
   padding: 0.5rem 0; /* 上下内边距，避免点击区域过小 */
   font-size: 1rem;
 }
-
-
 
 /* 版权信息居中 */
 .copyright {
