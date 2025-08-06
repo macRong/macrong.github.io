@@ -19,7 +19,7 @@ header_pages:
   - about.md        # 关于页
 
 # 分页设置（首页每页显示的文章数量）
-paginate: 5         # 每页5篇文章
+paginate: 0         # 每页5篇文章
 
 # Minima 主题特有配置
 minima:
@@ -35,11 +35,3 @@ plugins:
   - jekyll-paginate   # 分页功能
   - jekyll-seo-tag    # 自动生成SEO标签（标题、描述等）
   - jekyll-feed       # 生成RSS订阅源
-  # 暂时移除 jekyll-archives，避免与手动归档页冲突
-  # - jekyll-archives
-
-# 如需使用插件归档，需删除 archive.md 并修改路径为：
-# jekyll-archives:
-#   enabled: all
-#   layout: archive
-#   path: '/archive/'  # 与导航链接保持一致
