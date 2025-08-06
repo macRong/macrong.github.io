@@ -8,9 +8,9 @@ baseurl: ""                 # 子路径（如博客部署在域名下的子目�
 url: "http://gxxn.com"  # 博客完整域名（必填）
 
 # 作者信息（会显示在文章底部或 About 页）
-author:
-  name: Colin
-  bio: 技术开发等
+# author:
+#   name: Colin
+#   bio: 技术开发等
 
 # 导航菜单（顶部导航栏显示的页面）
 header_pages:
@@ -24,7 +24,7 @@ paginate: 0         # 每页5篇文章
 # Minima 主题特有配置
 minima:
   cover_image: /assets/images/default-cover.jpg  # 文章默认封面图路径
-  skin: classic     # 主题皮肤（可选：classic/default、dark、solarized-light）
+  skin: classic     # 主题皮肤（可选：classic/default、dark、solarized-light）https://jekyll.github.io/minima/
   social_links:     # 页脚显示的社交媒体链接
     - { platform: github,  user_url: "https://github.com/macRong" }
     - { platform: x, user_url: "https://x.com/colinluckyrong" }
