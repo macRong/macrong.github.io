@@ -1,0 +1,39 @@
+theme: minima  # 使用本地安装的 Minima 主题
+
+
+  # 站点基本信息
+title: 我的开发搞钱记录         # 显示在浏览器标签和首页顶部
+email: d8tv@163.com       # 联系邮箱（会显示在页脚）
+description: "个人开发搞钱"  # 简短描述
+baseurl: ""                 # 子路径（如博客部署在域名下的子目录，填 "/blog"）
+url: "http://gxxn.com"  # 博客完整域名（必填）
+
+# 作者信息（会显示在文章底部或 About 页）
+author:
+  name: Colin
+  bio: 技术开发等
+
+# 导航菜单（顶部导航栏显示的页面）
+header_pages:
+  - archive.md      # 归档页（需手动创建）
+  - tags.md         # 标签页（需手动创建）
+  - about.md  # 正确写法（无需加路径，直接写文件名）
+  # 错误示例：- /about.md 或 - pages/about.md
+
+# 分页设置（首页每页显示的文章数量）
+paginate: 5         # 每页5篇文章
+
+# Minima 主题特有配置
+minima:
+  cover_image: /assets/images/default-cover.jpg  # 文章默认封面图路径
+  skin: classic     # 主题皮肤（可选：classic/default、dark、solarized-light）
+  social_links:     # 页脚显示的社交媒体链接
+    - { platform: github,  user_url: "https://github.com/macRong" }
+    - { platform: x, user_url: "https://x.com/colinluckyrong" }
+    - { platform: linkedin, user_url: "https://linkedin.com/in/你的用户名" }
+
+# 启用的插件（GitHub Pages 已内置支持）
+plugins:
+  - jekyll-paginate   # 分页功能
+  - jekyll-seo-tag    # 自动生成SEO标签（标题、描述等）
+  - jekyll-feed       # 生成RSS订阅源
