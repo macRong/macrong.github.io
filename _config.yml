@@ -29,7 +29,7 @@ minima:
   cover_image: /assets/images/default-cover.jpg  # 文章默认封面图路径
   skin: classic     # 主题皮肤（可选：classic/default、dark、solarized-light）https://jekyll.github.io/minima/
 
-
+# 以下必须是minima版本3.0以上才可以，否则无效，现在是3.0以下
 social_links:
   - { platform: Github, user_url: "https://github.com/macRong" }  # 首字母大写
   - { platform: Twitter, user_url: "https://twitter.com/colinluckyrong" }  # 首字母大写
