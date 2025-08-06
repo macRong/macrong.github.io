@@ -8,8 +8,8 @@ baseurl: ""                 # 子路径（如博客部署在域名下的子目�
 url: "http://gxxn.com"  # 博客完整域名（必填）
 
 # 作者信息（会显示在文章底部或 About 页）
-# author:
-#   name: Colin
+author:
+  name: Colin
 #   bio: 技术开发等
 
 # 导航菜单（顶部导航栏显示的页面）
