@@ -29,12 +29,10 @@ minima:
   skin: classic     # 主题皮肤（可选：classic/default、dark、solarized-light）https://jekyll.github.io/minima/
 
 
-# _config.yml
 social_links:
-  - { platform: github, user_url: "https://github.com/macRong" }
-  - { platform: twitter, user_url: "https://twitter.com/colinluckyrong" }  # X（原Twitter）
-  - { platform: rss, user_url: "https://macrong.github.io/feed.xml" }
-
+  - { platform: Github, user_url: "https://github.com/macRong" }  # 首字母大写
+  - { platform: Twitter, user_url: "https://twitter.com/colinluckyrong" }  # 首字母大写
+  - { platform: Rss, user_url: "https://macrong.github.io/feed.xml" }  # 首字母大写
 
 
 # 启用的插件（GitHub Pages 已内置支持）
