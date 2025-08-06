@@ -8,7 +8,7 @@ description: "本文详细介绍 Minima 主题的配置方法"  # 文章描述�
 ---
 
 
-
+这是文章firstone
 这里是文章正文内容（Markdown 格式）...
 
 
@@ -35,5 +35,4 @@ description: "本文详细介绍 Minima 主题的配置方法"  # 文章描述�
 
 
 
-Made with Colin using [GitHub Pages](https://pages.github.com),visit
 
