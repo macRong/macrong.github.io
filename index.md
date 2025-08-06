@@ -1,36 +1,31 @@
 ---
-layout: home  # 使用首页布局
+layout: home
+title: 首页
 ---
 
+<!-- 保留主题默认的文章列表渲染 -->
+{{ content }}
 
-一人AI开发公司，专注搞钱
+<!-- 直接使用 Minima 主题自带的文章循环逻辑 -->
+<ul class="post-list">
+  {% for post in site.posts %}
+    <li>
+      {% assign date_format = site.minima.date_format | default: "%b %-d, %Y" %}
+      <span class="post-meta">{{ post.date | date: date_format }}</span>
 
-{% for post in paginator.posts %}
+      <h3>
+        <a class="post-link" href="{{ post.url | relative_url }}">
+          {{ post.title | escape }}
+        </a>
+      </h3>
+      
+      <!-- 显示文章摘要（主题默认支持） -->
+      {% if site.show_excerpts %}
+        {{ post.excerpt }}
+      {% endif %}
+    </li>
+  {% endfor %}
+</ul>
 
-  <h2><a href="{{ post.url }}">{{ post.title }}</a></h2>
-  <p>{{ post.description }}</p>
-  <small>{{ post.date | date: "%Y-%m-%d" }} · {{ post.categories | join: " / " }}</small>
-{% endfor %}
-
----
-
-## 📝 Blog
-
-- [How I built this site](https://yourusername.github.io/blog/how-i-built)
-- [Best GitHub Pages tips](https://yourusername.github.io/blog/github-pages-tips)
-
----
-
-## 🔧 Projects
-
-- [**CoolApp**](https://github.com/yourusername/coolapp) – Mobile app with offline sync.
-- [**DevKit**](https://github.com/yourusername/devkit) – Toolkit for developers.
-
----
-
-## 📬 Contact
-
-- [Email](mailto:your@email.com)
-- [Twitter](https://twitter.com/yourhandle)
-- [blog](https://macrong.github.io/macRong/)
-
+<!-- 主题默认的"订阅RSS"链接（可选保留） -->
+<p class="rss-subscribe">subscribe <a href="{{ "/feed.xml" | relative_url }}">via RSS</a></p>
