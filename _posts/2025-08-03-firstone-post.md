@@ -1,7 +1,7 @@
 ---
 layout: post               # 必须指定为 post（使用文章布局）
 title: "如何配置 Minima 主题"  # 文章标题
-date: 2025-08-06 16:30:00  # 发布时间（格式：YYYY-MM-DD HH:MM:SS）
+date: 2025-08-03 16:30:00  # 发布时间（格式：YYYY-MM-DD HH:MM:SS）
 categories: [教程, GitHub]  # 分类（可多个）
 tags: [Minima, Jekyll]      # 标签（可多个）
 description: "本文详细介绍 Minima 主题的配置方法"  # 文章描述（用于SEO和列表页）
