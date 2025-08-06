@@ -27,14 +27,14 @@ paginate: 0         # 每页5篇文章
 minima:
   cover_image: /assets/images/default-cover.jpg  # 文章默认封面图路径
   skin: classic     # 主题皮肤（可选：classic/default、dark、solarized-light）https://jekyll.github.io/minima/
-#   social_links:     # 页脚显示的社交媒体链接
-#     - { platform: github,  user_url: "https://github.com/macRong" }
-#     - { platform: twitter, user_url: "https://x.com/colinluckyrong" }
-#     - { platform: linkedin, user_url: "https://linkedin.com/in/你的用户名" }
+  social_links:     # 页脚显示的社交媒体链接
+    - { platform: github,  user_url: "https://github.com/macRong" }
+    - { platform: twitter, user_url: "https://x.com/colinluckyrong" }
+    - { platform: linkedin, user_url: "https://linkedin.com/in/你的用户名" }
+    - { platform: rss, user_url: "https://macrong.github.io/feed.xml" }
 
-# github_username: "https://github.com/macRong"
-# twitter_username: "https://x.com/colinluckyrong"  # X（Twitter）用户名
-# rss: true  # 启用 RSS 订阅链接
+
+
 
 social_links:
     - title: Minima Theme repository at GitHub
