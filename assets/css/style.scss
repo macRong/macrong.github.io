@@ -1,7 +1,10 @@
 ---
 ---
 
-@import "minima";
+@import
+  "minima/skins/{{ site.minima.skin | default: 'classic' }}",
+  "minima/initialize";
+
 
 /* 调整导航项间距 */
 .site-nav .trigger {
