@@ -7,6 +7,29 @@
   "minima/initialize";
 
 
+  /* 调整导航项间距 */
+.site-nav .trigger {
+  display: flex;
+  gap: 2rem; /* 导航项之间的距离，可根据需要调整 */
+  justify-content: center; /* 导航整体居中（可选） */
+}
+
+/* 调整选中状态样式 */
+.site-nav .page-link.active {
+  /* 移除默认可能的选中样式，如背景色 */
+  background-color: transparent;
+  /* 可选：添加自定义选中效果，如下划线 */
+  border-bottom: 2px solid #2c3e50; /* 与主题强调色匹配 */
+  padding-bottom: 0.25rem; /* 下划线与文字的距离 */
+}
+
+/* 导航项基础样式优化（可选） */
+.site-nav .page-link {
+  padding: 0.5rem 0; /* 上下内边距，避免点击区域过小 */
+  font-size: 1rem;
+}
+
+
 
 /* 版权信息居中 */
 .copyright {
