@@ -1,4 +1,6 @@
-theme: minima  # 使用本地安装的 Minima 主题
+# theme: minima  # 使用本地安装的 Minima 主题
+
+remote_theme: jekyll/minima
 
 # 站点基本信息
 title: "macRong's blog"         # 显示在浏览器标签和首页顶部
