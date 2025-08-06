@@ -1,7 +1,7 @@
 theme: minima  # 使用本地安装的 Minima 主题
 
 # 站点基本信息
-title: 我的开发搞钱记录         # 显示在浏览器标签和首页顶部
+title: "macRong's blog"         # 显示在浏览器标签和首页顶部
 email: d8tv@163.com       # 联系邮箱（会显示在页脚）
 description: "个人开发搞钱"  # 简短描述
 baseurl: ""                 # 子路径（如博客部署在域名下的子目录，填 "/blog"）
