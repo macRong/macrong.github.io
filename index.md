@@ -1,6 +1,5 @@
 ---
 layout: home  # Minima 主题默认首页布局，也可用 `layout: default` 自定义
-title: 首页
 ---
 
 <!-- 遍历 _posts 文章，按时间倒序展示 -->
