@@ -37,3 +37,10 @@ plugins:
   - jekyll-paginate   # 分页功能
   - jekyll-seo-tag    # 自动生成SEO标签（标题、描述等）
   - jekyll-feed       # 生成RSS订阅源
+  - jekyll-archives
+
+
+jekyll-archives:
+  enabled: true
+  layout: 'archive'
+  path: '/archives/%year%'
