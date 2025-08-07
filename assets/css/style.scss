@@ -43,38 +43,3 @@
 
 
 
-
-/* 文章列表整体 */
-.post {
-  margin-bottom: 2rem;  // 文章间距
-  padding-bottom: 1rem; 
-  border-bottom: 1px solid #eee;  // 分割线
-}
-
-/* 文章日期 */
-.post-date {
-  color: #888;  // 浅灰色
-  font-size: 0.9rem;
-  display: block;
-  margin-bottom: 0.5rem;
-}
-
-/* 文章标题 */
-.post-title {
-  margin: 0.2rem 0; 
-  font-size: 1.2rem;
-  a {
-    color: #1950ce;  // 标题默认黑色，覆盖主题蓝色
-    text-decoration: none;
-    &:hover {
-      color: #333;  // hover 深色
-    }
-  }
-}
-
-/* 文章内容摘要 */
-.post-content {
-  color: #555; 
-  font-size: 0.95rem;
-  line-height: 1.5;
-}
