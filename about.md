@@ -6,4 +6,4 @@ permalink: /about/   # 自定义URL（访问路径为 https://域名/about/）�
 
 
 
-这里是关于页的内容，可介绍自己、博客宗旨等...
+Hey, Full-Time Open-Sourcerer. Focused on Swift & JavaScript. Makes macOS&iOS apps
