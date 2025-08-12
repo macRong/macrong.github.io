@@ -7,3 +7,5 @@ permalink: /about/   # 自定义URL（访问路径为 https://域名/about/）�
 
 
 Hey, Full-Time Open-Sourcerer. Focused on Swift & JavaScript. Makes macOS&iOS apps
+
+Email: colintux@gmail.com
