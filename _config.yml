@@ -44,3 +44,5 @@ plugins:
 
 # _config.yml
 show_excerpts: true  # 显示摘要（默认 false）
+
+future: true  # 默认为 false，设为 true 则显示未来时间的文章
