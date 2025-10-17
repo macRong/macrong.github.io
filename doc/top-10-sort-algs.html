@@ -294,12 +294,9 @@
                 <!-- 算法原理 -->
                 <div class="mb-8">
                     <h3 class="text-lg font-medium mb-3 text-primary">算法原理</h3>
-                    <p class="mb-4 text-gray-700 leading-relaxed">
-                        冒泡排序（Bubble Sort）是一种简单的排序算法。它重复地走访过要排序的数列，一次比较两个相邻的元素，如果它们的顺序错误就把它们交换过来。走访数列的工作是重复地进行直到没有再需要交换，也就是说该数列已经排序完成。
-                    </p>
-                    <p class="text-gray-700 leading-relaxed">
-                        这个算法的名字由来是因为越小的元素会经由交换慢慢"浮"到数列的顶端，就如同水中的气泡一样向上冒，因此得名冒泡排序。
-                    </p>
+                    <div id="algorithm-principle" class="text-gray-700 leading-relaxed">
+                        <!-- 动态内容将在这里显示 -->
+                    </div>
                 </div>
                 
                 <!-- 复杂度分析 -->
@@ -308,17 +305,14 @@
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                         <div class="bg-gray-50 p-4 rounded-lg">
                             <h4 class="font-medium mb-2">时间复杂度</h4>
-                            <ul class="list-disc list-inside space-y-2 text-gray-700">
-                                <li>最佳情况：<span class="font-semibold">O(n)</span>（当数组已经排序时，使用优化版本）</li>
-                                <li>平均情况：<span class="font-semibold">O(n²)</span></li>
-                                <li>最坏情况：<span class="font-semibold">O(n²)</span></li>
+                            <ul class="list-disc list-inside space-y-2 text-gray-700" id="time-complexity">
+                                <!-- 动态内容将在这里显示 -->
                             </ul>
                         </div>
                         <div class="bg-gray-50 p-4 rounded-lg">
                             <h4 class="font-medium mb-2">空间复杂度</h4>
-                            <ul class="list-disc list-inside space-y-2 text-gray-700">
-                                <li>额外空间：<span class="font-semibold">O(1)</span></li>
-                                <li>原地排序算法，不需要额外的存储空间</li>
+                            <ul class="list-disc list-inside space-y-2 text-gray-700" id="space-complexity">
+                                <!-- 动态内容将在这里显示 -->
                             </ul>
                         </div>
                     </div>
@@ -394,16 +388,9 @@
                 <!-- 适用场景 -->
                 <div>
                     <h3 class="text-lg font-medium mb-3 text-primary">适用场景</h3>
-                    <p class="mb-3 text-gray-700">冒泡排序由于其简单性和稳定性，在某些特定场景下仍然有用：</p>
-                    <ul class="list-disc list-inside space-y-2 text-gray-700 mb-4">
-                        <li>对于几乎已经排序的数据，优化版的冒泡排序性能良好</li>
-                        <li>数据量很小的情况，简单性比效率更重要时</li>
-                        <li>教学场景，用于解释排序算法的基本原理</li>
-                        <li>需要稳定排序且实现简单的场景</li>
-                    </ul>
-                    <p class="text-gray-700">
-                        然而，对于大规模数据集，冒泡排序通常不是一个好的选择，因为其时间复杂度为O(n²)，效率较低。在这种情况下，应该选择快速排序、归并排序等更高效的算法。
-                    </p>
+                    <div id="applicable-scenarios" class="text-gray-700">
+                        <!-- 动态内容将在这里显示 -->
+                    </div>
                 </div>
             </div>
         </section>
@@ -464,6 +451,7 @@
             setupEventListeners();
             renderCodeBlocks(); // 初始化代码块
             updateLiveCodeDisplay(); // 初始化实时代码显示
+            updateAlgorithmExplanation(); // 初始化算法说明
         });
         
         // 设置事件监听器
@@ -533,10 +521,9 @@
                     // 更新实时代码显示的语言
                     updateLiveCodeLanguage(lang);
                     
-                    // 如果正在排序，重新渲染实时代码
-                    if (!isSorting) {
-                        updateLiveCodeDisplay();
-                    }
+                    // 立即更新实时代码显示 - 无论是否正在排序
+                    // 如果正在排序，保持当前高亮行；否则重置为初始状态
+                    updateLiveCodeDisplay();
                 });
             });
             
@@ -581,11 +568,90 @@
             currentAlgorithmName.textContent = name;
             codeAlgorithmName.textContent = name;
             explanationAlgorithmName.textContent = name;
+            
+            // 更新算法说明内容
+            updateAlgorithmExplanation();
+        }
+        
+        // 更新算法说明对应的内容
+        function updateAlgorithmExplanation() {
+            const content = getAlgorithmContent(currentAlgorithm);
+            
+            document.getElementById('algorithm-principle').innerHTML = content.principle;
+            document.getElementById('time-complexity').innerHTML = content.timeComplexity;
+            document.getElementById('space-complexity').innerHTML = content.spaceComplexity;
+            document.getElementById('applicable-scenarios').innerHTML = content.scenarios;
+        }
+        
+        // 返回算法内容（简化版）
+        function getAlgorithmContent(algorithm) {
+            const contents = {
+                bubble: {
+                    principle: '<p class="mb-4">冒泡排序是一种简单的排序算法，重复比较相邻元素，错序则交换。</p><p>越小的元素会像气泡一样"浮"到数列顶端。</p>',
+                    timeComplexity: '<li>最佳：<span class="font-semibold">O(n)</span></li><li>平均：<span class="font-semibold">O(n²)</span></li><li>最坏：<span class="font-semibold">O(n²)</span></li>',
+                    spaceComplexity: '<li>额外空间：<span class="font-semibold">O(1)</span></li><li>原地排序算法</li>',
+                    scenarios: '<div class="space-y-3"><p class="font-semibold text-green-700">✓ 核心适用场景：</p><ul class="list-disc list-inside space-y-2 ml-2 text-sm"><li><strong>算法教学</strong> - 逻辑最直观，适合初学者理解排序基本原理</li><li><strong>微小数据集(n&lt;20)</strong> - 实现简单，常数因子小</li><li><strong>近乎有序数据</strong> - 优化版本可达O(n)，仅需一次遍历</li><li><strong>严格稳定性要求</strong> - 天然稳定排序，相同元素保持原有顺序</li></ul><p class="text-sm bg-red-50 p-2 rounded mt-3">⚠️ <strong>不推荐：</strong>任何实际生产环境的大规模数据排序(n&gt;100) - 性能远低于快速/归并排序</p></div>'
+                },
+                selection: {
+                    principle: '<p class="mb-4">选择排序每次从未排序部分选出最小元素，放到已排序部分末尾。</p><p>交换次数最少，但不稳定。</p>',
+                    timeComplexity: '<li>最佳：<span class="font-semibold">O(n²)</span></li><li>平均：<span class="font-semibold">O(n²)</span></li><li>最坏：<span class="font-semibold">O(n²)</span></li>',
+                    spaceComplexity: '<li>额外空间：<span class="font-semibold">O(1)</span></li><li>原地排序</li>',
+                    scenarios: '<div class="space-y-3"><p class="font-semibold text-green-700">✓ 核心适用场景：</p><ul class="list-disc list-inside space-y-2 ml-2 text-sm"><li><strong>写操作代价极高</strong> - 如EEPROM/Flash存储，交换次数最多n-1次(所有O(n²)算法中最少)</li><li><strong>小型数据集</strong> - 实现简单，无递归开销</li><li><strong>辅助数据结构</strong> - 如实现优先队列的简单版本</li></ul><p class="text-sm bg-yellow-50 p-2 rounded mt-3">💡 <strong>特点：</strong>不稳定排序 - 相同元素可能改变相对位置</p><p class="text-sm bg-red-50 p-2 rounded mt-2">⚠️ <strong>不推荐：</strong>需要稳定性的场景；大数据集(插入排序在近有序数据上更优)</p></div>'
+                },
+                insertion: {
+                    principle: '<p class="mb-4">插入排序将元素逐个插入到已排序序列的适当位置。</p><p>类似于整理手牌的过程。</p>',
+                    timeComplexity: '<li>最佳：<span class="font-semibold">O(n)</span></li><li>平均：<span class="font-semibold">O(n²)</span></li><li>最坏：<span class="font-semibold">O(n²)</span></li>',
+                    spaceComplexity: '<li>额外空间：<span class="font-semibold">O(1)</span></li><li>原地排序</li>',
+                    scenarios: '<div class="space-y-3"><p class="font-semibold text-green-700">✓ 核心适用场景：</p><ul class="list-disc list-inside space-y-2 ml-2 text-sm"><li><strong>小数据集(n&lt;50)</strong> - 实践中常作为快速排序/归并排序的基准情况，性能优于复杂算法</li><li><strong>近乎有序数据</strong> - 平均移动次数接近O(n)，优于其他O(n²)算法</li><li><strong>在线排序</strong> - 数据流场景，新数据到达即可立即插入已排序部分</li><li><strong>稳定性要求</strong> - 天然稳定，广泛用于多关键字排序</li><li><strong>链表排序</strong> - 无需数组的随机访问，插入操作O(1)</li></ul><p class="text-sm bg-green-50 p-2 rounded mt-3">💡 <strong>工业应用：</strong>TimSort(Python/Java默认排序)的核心组件；快速排序小分区优化</p></div>'
+                },
+                shell: {
+                    principle: '<p class="mb-4">希尔排序是插入排序的改进，通过间隔比较和交换元素。</p><p>间隔逐渐减小，最后为1。</p>',
+                    timeComplexity: '<li>最佳：<span class="font-semibold">O(n log n)</span></li><li>平均：<span class="font-semibold">O(n log² n)</span></li><li>最坏：<span class="font-semibold">O(n²)</span></li>',
+                    spaceComplexity: '<li>额外空间：<span class="font-semibold">O(1)</span></li><li>原地排序</li>',
+                    scenarios: '<div class="space-y-3"><p class="font-semibold text-green-700">✓ 核心适用场景：</p><ul class="list-disc list-inside space-y-2 ml-2 text-sm"><li><strong>中等规模数据(10³~10⁵)</strong> - 性能介于O(n²)和O(n log n)之间，但实现简单</li><li><strong>内存限制环境</strong> - 原地排序且无递归，适合嵌入式系统</li><li><strong>代码简洁性要求</strong> - 比快速/归并排序实现更简单，但性能更好</li></ul><p class="text-sm bg-yellow-50 p-2 rounded mt-3">💡 <strong>注意：</strong>性能依赖于间隔序列选择(Knuth序列、Sedgewick序列等)</p><p class="text-sm bg-red-50 p-2 rounded mt-2">⚠️ <strong>不推荐：</strong>大规模数据 - 快速/归并排序更可预测且性能更优</p></div>'
+                },
+                merge: {
+                    principle: '<p class="mb-4">归并排序使用分治策略，将数组分成小数组排序后合并。</p><p>稳定且效率高。</p>',
+                    timeComplexity: '<li>最佳：<span class="font-semibold">O(n log n)</span></li><li>平均：<span class="font-semibold">O(n log n)</span></li><li>最坏：<span class="font-semibold">O(n log n)</span></li>',
+                    spaceComplexity: '<li>额外空间：<span class="font-semibold">O(n)</span></li><li>需要额外空间</li>',
+                    scenarios: '<div class="space-y-3"><p class="font-semibold text-green-700">✓ 核心适用场景：</p><ul class="list-disc list-inside space-y-2 ml-2 text-sm"><li><strong>严格稳定性要求</strong> - 天然稳定，相同元素保持原有顺序</li><li><strong>最坏情况保证</strong> - 任何情况下都保持O(n log n)，无退化风险</li><li><strong>外部排序</strong> - 数据量超过内存，适合磁盘文件排序(顺序访问友好)</li><li><strong>链表排序</strong> - 无需额外空间，可就地合并</li><li><strong>并行排序</strong> - 天然适合并行化，多线程/分布式场景</li></ul><p class="text-sm bg-green-50 p-2 rounded mt-3">💡 <strong>工业应用：</strong>TimSort的核心组件；Java对象数组默认排序；大数据处理(MapReduce)</p><p class="text-sm bg-red-50 p-2 rounded mt-2">⚠️ <strong>不推荐：</strong>内存严格限制场景 - 需要O(n)额外空间</p></div>'
+                },
+                quick: {
+                    principle: '<p class="mb-4">快速排序选择基准值，将小于基准的元素移到左边，大于的移到右边。</p><p>递归地对左右子数组排序。</p>',
+                    timeComplexity: '<li>最佳：<span class="font-semibold">O(n log n)</span></li><li>平均：<span class="font-semibold">O(n log n)</span></li><li>最坏：<span class="font-semibold">O(n²)</span></li>',
+                    spaceComplexity: '<li>额外空间：<span class="font-semibold">O(log n)</span></li><li>递归栈空间</li>',
+                    scenarios: '<div class="space-y-3"><p class="font-semibold text-green-700">✓ 核心适用场景：</p><ul class="list-disc list-inside space-y-2 ml-2 text-sm"><li><strong>通用排序首选</strong> - 平均性能最优，常数因子小，实践中快于归并排序</li><li><strong>大规模随机数据</strong> - 平均O(n log n)，原地排序节省内存</li><li><strong>CPU缓存友好</strong> - 局部性原理好，缓存命中率高于归并排序</li><li><strong>内存限制场景</strong> - O(log n)空间，远优于归并排序的O(n)</li></ul><p class="text-sm bg-green-50 p-2 rounded mt-3">💡 <strong>优化策略：</strong>三向切分(3-way partition)处理重复元素；Introsort防止退化；小分区切换插入排序</p><p class="text-sm bg-yellow-50 p-2 rounded mt-2">⚠️ <strong>注意：</strong>不稳定排序；最坏情况O(n²)(随机化pivot或Introsort可解决)</p><p class="text-sm bg-green-50 p-2 rounded mt-2">🎯 <strong>工业应用：</strong>C qsort()、C++ std::sort()、Go sort.Sort()的默认算法核心</p></div>'
+                },
+                heap: {
+                    principle: '<p class="mb-4">堆排序利用堆这种数据结构，先构建最大堆，然后交换堆顶和末尾。</p><p>重复调整堆结构。</p>',
+                    timeComplexity: '<li>最佳：<span class="font-semibold">O(n log n)</span></li><li>平均：<span class="font-semibold">O(n log n)</span></li><li>最坏：<span class="font-semibold">O(n log n)</span></li>',
+                    spaceComplexity: '<li>额外空间：<span class="font-semibold">O(1)</span></li><li>原地排序</li>',
+                    scenarios: '<div class="space-y-3"><p class="font-semibold text-green-700">✓ 核心适用场景：</p><ul class="list-disc list-inside space-y-2 ml-2 text-sm"><li><strong>最坏情况保证</strong> - 任何情况下都为O(n log n)，无退化风险</li><li><strong>内存严格限制</strong> - O(1)额外空间，原地排序</li><li><strong>Top-K问题</strong> - 找最大/最小K个元素，无需全排序</li><li><strong>优先队列实现</strong> - 堆是优先队列的典型实现</li></ul><p class="text-sm bg-yellow-50 p-2 rounded mt-3">💡 <strong>特点：</strong>不稳定排序；缓存局部性差于快速排序</p><p class="text-sm bg-green-50 p-2 rounded mt-2">🎯 <strong>工业应用：</strong>Introsort(快排退化时切换)；操作系统任务调度；流媒体数据处理</p></div>'
+                },
+                counting: {
+                    principle: '<p class="mb-4">计数排序统计每个元素出现次数，然后按顺序输出。</p><p>非比较排序，适用于整数排序。</p>',
+                    timeComplexity: '<li>最佳：<span class="font-semibold">O(n+k)</span></li><li>平均：<span class="font-semibold">O(n+k)</span></li><li>最坏：<span class="font-semibold">O(n+k)</span></li>',
+                    spaceComplexity: '<li>额外空间：<span class="font-semibold">O(k)</span></li><li>k为数据范围</li>',
+                    scenarios: '<div class="space-y-3"><p class="font-semibold text-green-700">✓ 核心适用场景：</p><ul class="list-disc list-inside space-y-2 ml-2 text-sm"><li><strong>小范围整数(k&lt;&lt;n)</strong> - 如年龄(0-150)、分数(0-100)、字符ASCII码(0-255)</li><li><strong>线性时间要求</strong> - O(n+k)时间，破比较排序下限Ω(n log n)</li><li><strong>需要稳定性</strong> - 改进版本可实现稳定排序</li><li><strong>频率统计</strong> - 附带获得每个值的出现次数</li></ul><p class="text-sm bg-green-50 p-2 rounded mt-3">💡 <strong>优化策略：</strong>值域偏移(min-max映射)减少空间；哈希表处理稀疏分布</p><p class="text-sm bg-red-50 p-2 rounded mt-2">⚠️ <strong>不推荐：</strong>范围大(k&gt;&gt;n)，如排序64位整数 - 空间浪费严重</p><p class="text-sm bg-green-50 p-2 rounded mt-2">🎯 <strong>工业应用：</strong>基数排序的子程序；图像处理直方图均衡化；选举计票系统</p></div>'
+                },
+                bucket: {
+                    principle: '<p class="mb-4">桶排序将数据分配到有限数量的桶中，每个桶内部排序后合并。</p><p>分而治之的思想。</p>',
+                    timeComplexity: '<li>最佳：<span class="font-semibold">O(n+k)</span></li><li>平均：<span class="font-semibold">O(n+k)</span></li><li>最坏：<span class="font-semibold">O(n²)</span></li>',
+                    spaceComplexity: '<li>额外空间：<span class="font-semibold">O(n+k)</span></li><li>需要桶空间</li>',
+                    scenarios: '<div class="space-y-3"><p class="font-semibold text-green-700">✓ 核心适用场景：</p><ul class="list-disc list-inside space-y-2 ml-2 text-sm"><li><strong>均匀分布数据</strong> - 数据在范围内均匀分布时效率最高，接近O(n)</li><li><strong>浮点数排序</strong> - [0,1)区间的浮点数，分桶后每桶元素少</li><li><strong>外部排序优化</strong> - 分桶减少磁盘I/O次数</li><li><strong>并行排序</strong> - 每个桶可独立并行处理</li></ul><p class="text-sm bg-yellow-50 p-2 rounded mt-3">💡 <strong>关键因素：</strong>桶数量选择（通常k≈n）；桶内排序算法选择（插入/快排）</p><p class="text-sm bg-red-50 p-2 rounded mt-2">⚠️ <strong>不推荐：</strong>数据分布不均 - 最坏O(n²)，大量元素落入同一桶</p><p class="text-sm bg-green-50 p-2 rounded mt-2">🎯 <strong>工业应用：</strong>分布式系统数据分片；大规模日志分析；直方图统计</p></div>'
+                },
+                radix: {
+                    principle: '<p class="mb-4">基数排序按位数分组排序，从低位到高位逐个处理。</p><p>非比较排序，适用于整数或字符串。</p>',
+                    timeComplexity: '<li>最佳：<span class="font-semibold">O(nk)</span></li><li>平均：<span class="font-semibold">O(nk)</span></li><li>最坏：<span class="font-semibold">O(nk)</span></li>',
+                    spaceComplexity: '<li>额外空间：<span class="font-semibold">O(n+k)</span></li><li>k为位数</li>',
+                    scenarios: '<div class="space-y-3"><p class="font-semibold text-green-700">✓ 核心适用场景：</p><ul class="list-disc list-inside space-y-2 ml-2 text-sm"><li><strong>固定位数整数</strong> - 32位/64位整数，电话号码，身份证号，激活码等</li><li><strong>字符串排序</strong> - 相同长度字符串，IP地址，MAC地址，日期时间</li><li><strong>大数据量</strong> - n很大但k很小时，效率高于比较排序</li><li><strong>稳定性要求</strong> - 使用稳定的计数排序作为子程序</li></ul><p class="text-sm bg-yellow-50 p-2 rounded mt-3">💡 <strong>优化策略：</strong>LSD(低位优先)适合定长；MSD(高位优先)适合变长；基数选择(2/10/256)</p><p class="text-sm bg-red-50 p-2 rounded mt-2">⚠️ <strong>不推荐：</strong>位数k很大 - 如浮点数、任意精度整数 - 迭代次数过多</p><p class="text-sm bg-green-50 p-2 rounded mt-2">🎯 <strong>工业应用：</strong>数据库索引排序；网络路由表；后缀数组构造；域名解析</p></div>'
+                }
+            };
+            return contents[algorithm] || contents.bubble;
         }
         
         // 渲染代码块
         function renderCodeBlocks() {
-            const codeData = getCodeExamples();
             const container = document.getElementById('code-content-container');
             container.innerHTML = '';
             
@@ -600,7 +666,13 @@
                 pre.className = 'bg-gray-50 p-4 rounded-lg overflow-x-auto';
                 
                 const code = document.createElement('code');
-                code.innerHTML = codeData[currentAlgorithm][lang];
+                
+                // 使用和实时代码执行相同的模板，确保代码完全一致
+                const codeTemplate = getCodeTemplateByLanguage(lang);
+                const codeLines = codeTemplate[currentAlgorithm] || codeTemplate.bubble;
+                
+                // 使用textContent确保正确显示特殊字符（<, >, &等）
+                code.textContent = codeLines.join('\n');
                 
                 pre.appendChild(code);
                 codeBlock.appendChild(pre);
@@ -1681,6 +1753,12 @@ func radixSort(_ arr: [Int]) -&gt; [Int] {
         // 获取当前语言的代码模板用于实时显示
         function getCodeTemplateForLiveDisplay() {
             // 根据当前选中的语言返回相应的代码模板
+            const allTemplates = getCodeTemplateByLanguage(currentCodeLang);
+            return allTemplates[currentAlgorithm] || allTemplates.bubble;
+        }
+        
+        // 根据语言获取代码模板（统一入口）
+        function getCodeTemplateByLanguage(lang) {
             const templates = {
                 'c': getCodeTemplateC(),
                 'cpp': getCodeTemplateCpp(),
@@ -1689,7 +1767,7 @@ func radixSort(_ arr: [Int]) -&gt; [Int] {
                 'java': getCodeTemplateJava(),
                 'swift': getCodeTemplateSwift()
             };
-            return templates[currentCodeLang] || templates['cpp'];
+            return templates[lang] || templates['cpp'];
         }
         
         // C++语言代码模板
@@ -1862,13 +1940,188 @@ func radixSort(_ arr: [Int]) -&gt; [Int] {
                     '}'
                 ]
             };
-            return templates[currentAlgorithm] || templates.bubble;
+            return templates; // 返回完整的templates对象
         }
         
-        // C语言代码模板 (与C++类似，但使用数组)
+        // C语言代码模板
         function getCodeTemplateC() {
-            // C语言使用与C++相同的逻辑，但语法略有不同
-            return getCodeTemplateCpp();
+            const templates = {
+                bubble: [
+                    'void bubbleSort(int arr[], int n) {',
+                    '    for (int i = 0; i < n-1; i++) {',
+                    '        for (int j = 0; j < n-i-1; j++) {',
+                    '            if (arr[j] > arr[j+1]) {',
+                    '                int temp = arr[j];',
+                    '                arr[j] = arr[j+1];',
+                    '                arr[j+1] = temp;',
+                    '            }',
+                    '        }',
+                    '    }',
+                    '}'
+                ],
+                selection: [
+                    'void selectionSort(int arr[], int n) {',
+                    '    for (int i = 0; i < n-1; i++) {',
+                    '        int minIdx = i;',
+                    '        for (int j = i+1; j < n; j++) {',
+                    '            if (arr[j] < arr[minIdx])',
+                    '                minIdx = j;',
+                    '        }',
+                    '        int temp = arr[minIdx];',
+                    '        arr[minIdx] = arr[i];',
+                    '        arr[i] = temp;',
+                    '    }',
+                    '}'
+                ],
+                insertion: [
+                    'void insertionSort(int arr[], int n) {',
+                    '    for (int i = 1; i < n; i++) {',
+                    '        int key = arr[i];',
+                    '        int j = i - 1;',
+                    '        while (j >= 0 && arr[j] > key) {',
+                    '            arr[j + 1] = arr[j];',
+                    '            j--;',
+                    '        }',
+                    '        arr[j + 1] = key;',
+                    '    }',
+                    '}'
+                ],
+                shell: [
+                    'void shellSort(int arr[], int n) {',
+                    '    for (int gap = n/2; gap > 0; gap /= 2) {',
+                    '        for (int i = gap; i < n; i++) {',
+                    '            int temp = arr[i];',
+                    '            int j;',
+                    '            for (j = i; j >= gap && arr[j-gap] > temp; j -= gap)',
+                    '                arr[j] = arr[j - gap];',
+                    '            arr[j] = temp;',
+                    '        }',
+                    '    }',
+                    '}'
+                ],
+                merge: [
+                    'void merge(int arr[], int l, int m, int r) {',
+                    '    int n1 = m - l + 1, n2 = r - m;',
+                    '    int L[n1], R[n2];',
+                    '    for (int i = 0; i < n1; i++) L[i] = arr[l + i];',
+                    '    for (int j = 0; j < n2; j++) R[j] = arr[m + 1 + j];',
+                    '    int i = 0, j = 0, k = l;',
+                    '    while (i < n1 && j < n2)',
+                    '        arr[k++] = (L[i] <= R[j]) ? L[i++] : R[j++];',
+                    '    while (i < n1) arr[k++] = L[i++];',
+                    '    while (j < n2) arr[k++] = R[j++];',
+                    '}',
+                    'void mergeSort(int arr[], int l, int r) {',
+                    '    if (l < r) {',
+                    '        int m = l + (r - l) / 2;',
+                    '        mergeSort(arr, l, m);',
+                    '        mergeSort(arr, m + 1, r);',
+                    '        merge(arr, l, m, r);',
+                    '    }',
+                    '}'
+                ],
+                quick: [
+                    'int partition(int arr[], int low, int high) {',
+                    '    int pivot = arr[high];',
+                    '    int i = low - 1;',
+                    '    for (int j = low; j < high; j++) {',
+                    '        if (arr[j] < pivot) {',
+                    '            i++;',
+                    '            int temp = arr[i];',
+                    '            arr[i] = arr[j];',
+                    '            arr[j] = temp;',
+                    '        }',
+                    '    }',
+                    '    int temp = arr[i + 1];',
+                    '    arr[i + 1] = arr[high];',
+                    '    arr[high] = temp;',
+                    '    return i + 1;',
+                    '}',
+                    'void quickSort(int arr[], int low, int high) {',
+                    '    if (low < high) {',
+                    '        int pi = partition(arr, low, high);',
+                    '        quickSort(arr, low, pi - 1);',
+                    '        quickSort(arr, pi + 1, high);',
+                    '    }',
+                    '}'
+                ],
+                heap: [
+                    'void heapify(int arr[], int n, int i) {',
+                    '    int largest = i, l = 2*i + 1, r = 2*i + 2;',
+                    '    if (l < n && arr[l] > arr[largest]) largest = l;',
+                    '    if (r < n && arr[r] > arr[largest]) largest = r;',
+                    '    if (largest != i) {',
+                    '        int temp = arr[i];',
+                    '        arr[i] = arr[largest];',
+                    '        arr[largest] = temp;',
+                    '        heapify(arr, n, largest);',
+                    '    }',
+                    '}',
+                    'void heapSort(int arr[], int n) {',
+                    '    for (int i = n/2 - 1; i >= 0; i--)',
+                    '        heapify(arr, n, i);',
+                    '    for (int i = n-1; i > 0; i--) {',
+                    '        int temp = arr[0];',
+                    '        arr[0] = arr[i];',
+                    '        arr[i] = temp;',
+                    '        heapify(arr, i, 0);',
+                    '    }',
+                    '}'
+                ],
+                counting: [
+                    'void countingSort(int arr[], int n) {',
+                    '    int max = arr[0];',
+                    '    for (int i = 1; i < n; i++)',
+                    '        if (arr[i] > max) max = arr[i];',
+                    '    int count[max + 1];',
+                    '    memset(count, 0, sizeof(count));',
+                    '    for (int i = 0; i < n; i++) count[arr[i]]++;',
+                    '    for (int i = 1; i <= max; i++) count[i] += count[i-1];',
+                    '    int output[n];',
+                    '    for (int i = n-1; i >= 0; i--) {',
+                    '        output[count[arr[i]]-1] = arr[i];',
+                    '        count[arr[i]]--;',
+                    '    }',
+                    '    for (int i = 0; i < n; i++) arr[i] = output[i];',
+                    '}'
+                ],
+                bucket: [
+                    'void bucketSort(int arr[], int n) {',
+                    '    if (n <= 0) return;',
+                    '    int max = arr[0], min = arr[0];',
+                    '    for (int i = 1; i < n; i++) {',
+                    '        if (arr[i] > max) max = arr[i];',
+                    '        if (arr[i] < min) min = arr[i];',
+                    '    }',
+                    '    int bucketCount = 10;',
+                    '    int bucketRange = (max - min) / bucketCount + 1;',
+                    '    // Distribute elements into buckets',
+                    '    // Sort each bucket and concatenate',
+                    '}'
+                ],
+                radix: [
+                    'void countingSortByDigit(int arr[], int n, int exp) {',
+                    '    int output[n], count[10] = {0};',
+                    '    for (int i = 0; i < n; i++)',
+                    '        count[(arr[i]/exp)%10]++;',
+                    '    for (int i = 1; i < 10; i++)',
+                    '        count[i] += count[i-1];',
+                    '    for (int i = n-1; i >= 0; i--) {',
+                    '        output[count[(arr[i]/exp)%10]-1] = arr[i];',
+                    '        count[(arr[i]/exp)%10]--;',
+                    '    }',
+                    '    for (int i = 0; i < n; i++) arr[i] = output[i];',
+                    '}',
+                    'void radixSort(int arr[], int n) {',
+                    '    int max = arr[0];',
+                    '    for (int i = 1; i < n; i++)',
+                    '        if (arr[i] > max) max = arr[i];',
+                    '    for (int exp = 1; max/exp > 0; exp *= 10)',
+                    '        countingSortByDigit(arr, n, exp);',
+                    '}'
+                ]
+            };
+            return templates; // 返回完整的templates对象
         }
         
         // Python语言代码模板
@@ -1904,10 +2157,145 @@ func radixSort(_ arr: [Int]) -&gt; [Int] {
                     '            j -= 1',
                     '        arr[j + 1] = key',
                     '    return arr'
+                ],
+                shell: [
+                    'def shell_sort(arr):',
+                    '    n = len(arr)',
+                    '    gap = n // 2',
+                    '    while gap > 0:',
+                    '        for i in range(gap, n):',
+                    '            temp = arr[i]',
+                    '            j = i',
+                    '            while j >= gap and arr[j - gap] > temp:',
+                    '                arr[j] = arr[j - gap]',
+                    '                j -= gap',
+                    '            arr[j] = temp',
+                    '        gap //= 2',
+                    '    return arr'
+                ],
+                merge: [
+                    'def merge_sort(arr):',
+                    '    if len(arr) > 1:',
+                    '        mid = len(arr) // 2',
+                    '        L, R = arr[:mid], arr[mid:]',
+                    '        merge_sort(L)',
+                    '        merge_sort(R)',
+                    '        i = j = k = 0',
+                    '        while i < len(L) and j < len(R):',
+                    '            if L[i] <= R[j]:',
+                    '                arr[k] = L[i]',
+                    '                i += 1',
+                    '            else:',
+                    '                arr[k] = R[j]',
+                    '                j += 1',
+                    '            k += 1',
+                    '        while i < len(L):',
+                    '            arr[k] = L[i]',
+                    '            i += 1',
+                    '            k += 1',
+                    '        while j < len(R):',
+                    '            arr[k] = R[j]',
+                    '            j += 1',
+                    '            k += 1',
+                    '    return arr'
+                ],
+                quick: [
+                    'def quick_sort(arr, low=0, high=None):',
+                    '    if high is None:',
+                    '        high = len(arr) - 1',
+                    '    if low < high:',
+                    '        pi = partition(arr, low, high)',
+                    '        quick_sort(arr, low, pi - 1)',
+                    '        quick_sort(arr, pi + 1, high)',
+                    '    return arr',
+                    '',
+                    'def partition(arr, low, high):',
+                    '    pivot = arr[high]',
+                    '    i = low - 1',
+                    '    for j in range(low, high):',
+                    '        if arr[j] < pivot:',
+                    '            i += 1',
+                    '            arr[i], arr[j] = arr[j], arr[i]',
+                    '    arr[i + 1], arr[high] = arr[high], arr[i + 1]',
+                    '    return i + 1'
+                ],
+                heap: [
+                    'def heapify(arr, n, i):',
+                    '    largest = i',
+                    '    l, r = 2*i + 1, 2*i + 2',
+                    '    if l < n and arr[l] > arr[largest]:',
+                    '        largest = l',
+                    '    if r < n and arr[r] > arr[largest]:',
+                    '        largest = r',
+                    '    if largest != i:',
+                    '        arr[i], arr[largest] = arr[largest], arr[i]',
+                    '        heapify(arr, n, largest)',
+                    '',
+                    'def heap_sort(arr):',
+                    '    n = len(arr)',
+                    '    for i in range(n//2 - 1, -1, -1):',
+                    '        heapify(arr, n, i)',
+                    '    for i in range(n-1, 0, -1):',
+                    '        arr[0], arr[i] = arr[i], arr[0]',
+                    '        heapify(arr, i, 0)',
+                    '    return arr'
+                ],
+                counting: [
+                    'def counting_sort(arr):',
+                    '    max_val = max(arr)',
+                    '    count = [0] * (max_val + 1)',
+                    '    output = [0] * len(arr)',
+                    '    for num in arr:',
+                    '        count[num] += 1',
+                    '    for i in range(1, len(count)):',
+                    '        count[i] += count[i-1]',
+                    '    for i in range(len(arr)-1, -1, -1):',
+                    '        output[count[arr[i]]-1] = arr[i]',
+                    '        count[arr[i]] -= 1',
+                    '    return output'
+                ],
+                bucket: [
+                    'def bucket_sort(arr):',
+                    '    if not arr:',
+                    '        return arr',
+                    '    bucket_count = 10',
+                    '    max_val, min_val = max(arr), min(arr)',
+                    '    bucket_range = (max_val - min_val) / bucket_count + 1',
+                    '    buckets = [[] for _ in range(bucket_count)]',
+                    '    for num in arr:',
+                    '        idx = int((num - min_val) / bucket_range)',
+                    '        buckets[idx].append(num)',
+                    '    result = []',
+                    '    for bucket in buckets:',
+                    '        result.extend(sorted(bucket))',
+                    '    return result'
+                ],
+                radix: [
+                    'def counting_sort_by_digit(arr, exp):',
+                    '    n = len(arr)',
+                    '    output = [0] * n',
+                    '    count = [0] * 10',
+                    '    for i in range(n):',
+                    '        index = arr[i] // exp',
+                    '        count[index % 10] += 1',
+                    '    for i in range(1, 10):',
+                    '        count[i] += count[i-1]',
+                    '    for i in range(n-1, -1, -1):',
+                    '        index = arr[i] // exp',
+                    '        output[count[index % 10]-1] = arr[i]',
+                    '        count[index % 10] -= 1',
+                    '    return output',
+                    '',
+                    'def radix_sort(arr):',
+                    '    max_val = max(arr)',
+                    '    exp = 1',
+                    '    while max_val // exp > 0:',
+                    '        arr = counting_sort_by_digit(arr, exp)',
+                    '        exp *= 10',
+                    '    return arr'
                 ]
             };
-            // 使用C++模板作为默认回退
-            return templates[currentAlgorithm] || getCodeTemplateCpp();
+            return templates; // 返回完整的templates对象
         }
         
         // Go语言代码模板
@@ -1951,9 +2339,202 @@ func radixSort(_ arr: [Int]) -&gt; [Int] {
                     '        arr[j+1] = key',
                     '    }',
                     '}'
+                ],
+                shell: [
+                    'func shellSort(arr []int) {',
+                    '    n := len(arr)',
+                    '    for gap := n / 2; gap > 0; gap /= 2 {',
+                    '        for i := gap; i < n; i++ {',
+                    '            temp := arr[i]',
+                    '            j := i',
+                    '            for j >= gap && arr[j-gap] > temp {',
+                    '                arr[j] = arr[j-gap]',
+                    '                j -= gap',
+                    '            }',
+                    '            arr[j] = temp',
+                    '        }',
+                    '    }',
+                    '}'
+                ],
+                merge: [
+                    'func merge(arr []int, l, m, r int) {',
+                    '    n1, n2 := m-l+1, r-m',
+                    '    L := make([]int, n1)',
+                    '    R := make([]int, n2)',
+                    '    copy(L, arr[l:m+1])',
+                    '    copy(R, arr[m+1:r+1])',
+                    '    i, j, k := 0, 0, l',
+                    '    for i < n1 && j < n2 {',
+                    '        if L[i] <= R[j] {',
+                    '            arr[k] = L[i]',
+                    '            i++',
+                    '        } else {',
+                    '            arr[k] = R[j]',
+                    '            j++',
+                    '        }',
+                    '        k++',
+                    '    }',
+                    '    for i < n1 {',
+                    '        arr[k] = L[i]',
+                    '        i++',
+                    '        k++',
+                    '    }',
+                    '    for j < n2 {',
+                    '        arr[k] = R[j]',
+                    '        j++',
+                    '        k++',
+                    '    }',
+                    '}',
+                    '',
+                    'func mergeSort(arr []int, l, r int) {',
+                    '    if l < r {',
+                    '        m := l + (r-l)/2',
+                    '        mergeSort(arr, l, m)',
+                    '        mergeSort(arr, m+1, r)',
+                    '        merge(arr, l, m, r)',
+                    '    }',
+                    '}'
+                ],
+                quick: [
+                    'func partition(arr []int, low, high int) int {',
+                    '    pivot := arr[high]',
+                    '    i := low - 1',
+                    '    for j := low; j < high; j++ {',
+                    '        if arr[j] < pivot {',
+                    '            i++',
+                    '            arr[i], arr[j] = arr[j], arr[i]',
+                    '        }',
+                    '    }',
+                    '    arr[i+1], arr[high] = arr[high], arr[i+1]',
+                    '    return i + 1',
+                    '}',
+                    '',
+                    'func quickSort(arr []int, low, high int) {',
+                    '    if low < high {',
+                    '        pi := partition(arr, low, high)',
+                    '        quickSort(arr, low, pi-1)',
+                    '        quickSort(arr, pi+1, high)',
+                    '    }',
+                    '}'
+                ],
+                heap: [
+                    'func heapify(arr []int, n, i int) {',
+                    '    largest := i',
+                    '    l, r := 2*i+1, 2*i+2',
+                    '    if l < n && arr[l] > arr[largest] {',
+                    '        largest = l',
+                    '    }',
+                    '    if r < n && arr[r] > arr[largest] {',
+                    '        largest = r',
+                    '    }',
+                    '    if largest != i {',
+                    '        arr[i], arr[largest] = arr[largest], arr[i]',
+                    '        heapify(arr, n, largest)',
+                    '    }',
+                    '}',
+                    '',
+                    'func heapSort(arr []int) {',
+                    '    n := len(arr)',
+                    '    for i := n/2 - 1; i >= 0; i-- {',
+                    '        heapify(arr, n, i)',
+                    '    }',
+                    '    for i := n - 1; i > 0; i-- {',
+                    '        arr[0], arr[i] = arr[i], arr[0]',
+                    '        heapify(arr, i, 0)',
+                    '    }',
+                    '}'
+                ],
+                counting: [
+                    'func countingSort(arr []int) []int {',
+                    '    if len(arr) == 0 {',
+                    '        return arr',
+                    '    }',
+                    '    max := arr[0]',
+                    '    for _, v := range arr {',
+                    '        if v > max {',
+                    '            max = v',
+                    '        }',
+                    '    }',
+                    '    count := make([]int, max+1)',
+                    '    output := make([]int, len(arr))',
+                    '    for _, v := range arr {',
+                    '        count[v]++',
+                    '    }',
+                    '    for i := 1; i <= max; i++ {',
+                    '        count[i] += count[i-1]',
+                    '    }',
+                    '    for i := len(arr) - 1; i >= 0; i-- {',
+                    '        output[count[arr[i]]-1] = arr[i]',
+                    '        count[arr[i]]--',
+                    '    }',
+                    '    return output',
+                    '}'
+                ],
+                bucket: [
+                    'func bucketSort(arr []int) []int {',
+                    '    if len(arr) == 0 {',
+                    '        return arr',
+                    '    }',
+                    '    max, min := arr[0], arr[0]',
+                    '    for _, v := range arr {',
+                    '        if v > max {',
+                    '            max = v',
+                    '        }',
+                    '        if v < min {',
+                    '            min = v',
+                    '        }',
+                    '    }',
+                    '    bucketCount := 10',
+                    '    bucketRange := (max-min)/bucketCount + 1',
+                    '    buckets := make([][]int, bucketCount)',
+                    '    for _, v := range arr {',
+                    '        idx := (v - min) / bucketRange',
+                    '        buckets[idx] = append(buckets[idx], v)',
+                    '    }',
+                    '    result := []int{}',
+                    '    for i := range buckets {',
+                    '        sort.Ints(buckets[i])',
+                    '        result = append(result, buckets[i]...)',
+                    '    }',
+                    '    return result',
+                    '}'
+                ],
+                radix: [
+                    'func countingSortByDigit(arr []int, exp int) []int {',
+                    '    n := len(arr)',
+                    '    output := make([]int, n)',
+                    '    count := make([]int, 10)',
+                    '    for i := 0; i < n; i++ {',
+                    '        count[(arr[i]/exp)%10]++',
+                    '    }',
+                    '    for i := 1; i < 10; i++ {',
+                    '        count[i] += count[i-1]',
+                    '    }',
+                    '    for i := n - 1; i >= 0; i-- {',
+                    '        output[count[(arr[i]/exp)%10]-1] = arr[i]',
+                    '        count[(arr[i]/exp)%10]--',
+                    '    }',
+                    '    return output',
+                    '}',
+                    '',
+                    'func radixSort(arr []int) []int {',
+                    '    if len(arr) == 0 {',
+                    '        return arr',
+                    '    }',
+                    '    max := arr[0]',
+                    '    for _, v := range arr {',
+                    '        if v > max {',
+                    '            max = v',
+                    '        }',
+                    '    }',
+                    '    for exp := 1; max/exp > 0; exp *= 10 {',
+                    '        arr = countingSortByDigit(arr, exp)',
+                    '    }',
+                    '    return arr',
+                    '}'
                 ]
             };
-            return templates[currentAlgorithm] || getCodeTemplateCpp();
+            return templates; // 返回完整的templates对象
         }
         
         // Java语言代码模板
@@ -2007,9 +2588,177 @@ func radixSort(_ arr: [Int]) -&gt; [Int] {
                     '        }',
                     '    }',
                     '}'
+                ],
+                shell: [
+                    'public class ShellSort {',
+                    '    void shellSort(int arr[]) {',
+                    '        int n = arr.length;',
+                    '        for (int gap = n/2; gap > 0; gap /= 2) {',
+                    '            for (int i = gap; i < n; i++) {',
+                    '                int temp = arr[i];',
+                    '                int j;',
+                    '                for (j = i; j >= gap && arr[j-gap] > temp; j -= gap)',
+                    '                    arr[j] = arr[j - gap];',
+                    '                arr[j] = temp;',
+                    '            }',
+                    '        }',
+                    '    }',
+                    '}'
+                ],
+                merge: [
+                    'public class MergeSort {',
+                    '    void merge(int arr[], int l, int m, int r) {',
+                    '        int n1 = m - l + 1, n2 = r - m;',
+                    '        int L[] = new int[n1], R[] = new int[n2];',
+                    '        for (int i = 0; i < n1; i++) L[i] = arr[l + i];',
+                    '        for (int j = 0; j < n2; j++) R[j] = arr[m + 1 + j];',
+                    '        int i = 0, j = 0, k = l;',
+                    '        while (i < n1 && j < n2)',
+                    '            arr[k++] = (L[i] <= R[j]) ? L[i++] : R[j++];',
+                    '        while (i < n1) arr[k++] = L[i++];',
+                    '        while (j < n2) arr[k++] = R[j++];',
+                    '    }',
+                    '    ',
+                    '    void mergeSort(int arr[], int l, int r) {',
+                    '        if (l < r) {',
+                    '            int m = l + (r - l) / 2;',
+                    '            mergeSort(arr, l, m);',
+                    '            mergeSort(arr, m + 1, r);',
+                    '            merge(arr, l, m, r);',
+                    '        }',
+                    '    }',
+                    '}'
+                ],
+                quick: [
+                    'public class QuickSort {',
+                    '    int partition(int arr[], int low, int high) {',
+                    '        int pivot = arr[high];',
+                    '        int i = low - 1;',
+                    '        for (int j = low; j < high; j++) {',
+                    '            if (arr[j] < pivot) {',
+                    '                i++;',
+                    '                int temp = arr[i];',
+                    '                arr[i] = arr[j];',
+                    '                arr[j] = temp;',
+                    '            }',
+                    '        }',
+                    '        int temp = arr[i + 1];',
+                    '        arr[i + 1] = arr[high];',
+                    '        arr[high] = temp;',
+                    '        return i + 1;',
+                    '    }',
+                    '    ',
+                    '    void quickSort(int arr[], int low, int high) {',
+                    '        if (low < high) {',
+                    '            int pi = partition(arr, low, high);',
+                    '            quickSort(arr, low, pi - 1);',
+                    '            quickSort(arr, pi + 1, high);',
+                    '        }',
+                    '    }',
+                    '}'
+                ],
+                heap: [
+                    'public class HeapSort {',
+                    '    void heapify(int arr[], int n, int i) {',
+                    '        int largest = i, l = 2*i + 1, r = 2*i + 2;',
+                    '        if (l < n && arr[l] > arr[largest]) largest = l;',
+                    '        if (r < n && arr[r] > arr[largest]) largest = r;',
+                    '        if (largest != i) {',
+                    '            int temp = arr[i];',
+                    '            arr[i] = arr[largest];',
+                    '            arr[largest] = temp;',
+                    '            heapify(arr, n, largest);',
+                    '        }',
+                    '    }',
+                    '    ',
+                    '    void heapSort(int arr[]) {',
+                    '        int n = arr.length;',
+                    '        for (int i = n/2 - 1; i >= 0; i--)',
+                    '            heapify(arr, n, i);',
+                    '        for (int i = n-1; i > 0; i--) {',
+                    '            int temp = arr[0];',
+                    '            arr[0] = arr[i];',
+                    '            arr[i] = temp;',
+                    '            heapify(arr, i, 0);',
+                    '        }',
+                    '    }',
+                    '}'
+                ],
+                counting: [
+                    'public class CountingSort {',
+                    '    void countingSort(int arr[]) {',
+                    '        int n = arr.length;',
+                    '        int max = arr[0];',
+                    '        for (int i = 1; i < n; i++)',
+                    '            if (arr[i] > max) max = arr[i];',
+                    '        int count[] = new int[max + 1];',
+                    '        int output[] = new int[n];',
+                    '        for (int i = 0; i < n; i++) count[arr[i]]++;',
+                    '        for (int i = 1; i <= max; i++) count[i] += count[i-1];',
+                    '        for (int i = n-1; i >= 0; i--) {',
+                    '            output[count[arr[i]]-1] = arr[i];',
+                    '            count[arr[i]]--;',
+                    '        }',
+                    '        for (int i = 0; i < n; i++) arr[i] = output[i];',
+                    '    }',
+                    '}'
+                ],
+                bucket: [
+                    'public class BucketSort {',
+                    '    void bucketSort(int arr[]) {',
+                    '        int n = arr.length;',
+                    '        if (n <= 0) return;',
+                    '        int max = arr[0], min = arr[0];',
+                    '        for (int i = 1; i < n; i++) {',
+                    '            if (arr[i] > max) max = arr[i];',
+                    '            if (arr[i] < min) min = arr[i];',
+                    '        }',
+                    '        int bucketCount = 10;',
+                    '        int bucketRange = (max - min) / bucketCount + 1;',
+                    '        ArrayList<Integer>[] buckets = new ArrayList[bucketCount];',
+                    '        for (int i = 0; i < bucketCount; i++)',
+                    '            buckets[i] = new ArrayList<>();',
+                    '        for (int num : arr) {',
+                    '            int idx = (num - min) / bucketRange;',
+                    '            buckets[idx].add(num);',
+                    '        }',
+                    '        int index = 0;',
+                    '        for (ArrayList<Integer> bucket : buckets) {',
+                    '            Collections.sort(bucket);',
+                    '            for (int num : bucket)',
+                    '                arr[index++] = num;',
+                    '        }',
+                    '    }',
+                    '}'
+                ],
+                radix: [
+                    'public class RadixSort {',
+                    '    void countingSortByDigit(int arr[], int n, int exp) {',
+                    '        int output[] = new int[n];',
+                    '        int count[] = new int[10];',
+                    '        for (int i = 0; i < n; i++)',
+                    '            count[(arr[i]/exp)%10]++;',
+                    '        for (int i = 1; i < 10; i++)',
+                    '            count[i] += count[i-1];',
+                    '        for (int i = n-1; i >= 0; i--) {',
+                    '            output[count[(arr[i]/exp)%10]-1] = arr[i];',
+                    '            count[(arr[i]/exp)%10]--;',
+                    '        }',
+                    '        for (int i = 0; i < n; i++) arr[i] = output[i];',
+                    '    }',
+                    '    ',
+                    '    void radixSort(int arr[]) {',
+                    '        int n = arr.length;',
+                    '        int max = arr[0];',
+                    '        for (int i = 1; i < n; i++)',
+                    '            if (arr[i] > max) max = arr[i];',
+                    '        for (int exp = 1; max/exp > 0; exp *= 10)',
+                    '            countingSortByDigit(arr, n, exp);',
+                    '    }',
+                    '}'
                 ]
             };
-            return templates[currentAlgorithm] || getCodeTemplateCpp();
+            return templates; // 返回完整的templates对象
         }
         
         // Swift语言代码模板
@@ -2053,13 +2802,182 @@ func radixSort(_ arr: [Int]) -&gt; [Int] {
                     '        arr[j + 1] = key',
                     '    }',
                     '}'
+                ],
+                shell: [
+                    'func shellSort(_ arr: inout [Int]) {',
+                    '    var gap = arr.count / 2',
+                    '    while gap > 0 {',
+                    '        for i in gap..<arr.count {',
+                    '            let temp = arr[i]',
+                    '            var j = i',
+                    '            while j >= gap && arr[j - gap] > temp {',
+                    '                arr[j] = arr[j - gap]',
+                    '                j -= gap',
+                    '            }',
+                    '            arr[j] = temp',
+                    '        }',
+                    '        gap /= 2',
+                    '    }',
+                    '}'
+                ],
+                merge: [
+                    'func mergeSort(_ arr: inout [Int], _ l: Int, _ r: Int) {',
+                    '    if l < r {',
+                    '        let m = l + (r - l) / 2',
+                    '        mergeSort(&arr, l, m)',
+                    '        mergeSort(&arr, m + 1, r)',
+                    '        merge(&arr, l, m, r)',
+                    '    }',
+                    '}',
+                    '',
+                    'func merge(_ arr: inout [Int], _ l: Int, _ m: Int, _ r: Int) {',
+                    '    let L = Array(arr[l...m])',
+                    '    let R = Array(arr[m+1...r])',
+                    '    var i = 0, j = 0, k = l',
+                    '    while i < L.count && j < R.count {',
+                    '        arr[k] = (L[i] <= R[j]) ? L[i] : R[j]',
+                    '        if L[i] <= R[j] { i += 1 } else { j += 1 }',
+                    '        k += 1',
+                    '    }',
+                    '    while i < L.count { arr[k] = L[i]; i += 1; k += 1 }',
+                    '    while j < R.count { arr[k] = R[j]; j += 1; k += 1 }',
+                    '}'
+                ],
+                quick: [
+                    'func quickSort(_ arr: inout [Int], _ low: Int, _ high: Int) {',
+                    '    if low < high {',
+                    '        let pi = partition(&arr, low, high)',
+                    '        quickSort(&arr, low, pi - 1)',
+                    '        quickSort(&arr, pi + 1, high)',
+                    '    }',
+                    '}',
+                    '',
+                    'func partition(_ arr: inout [Int], _ low: Int, _ high: Int) -> Int {',
+                    '    let pivot = arr[high]',
+                    '    var i = low - 1',
+                    '    for j in low..<high {',
+                    '        if arr[j] < pivot {',
+                    '            i += 1',
+                    '            arr.swapAt(i, j)',
+                    '        }',
+                    '    }',
+                    '    arr.swapAt(i + 1, high)',
+                    '    return i + 1',
+                    '}'
+                ],
+                heap: [
+                    'func heapify(_ arr: inout [Int], _ n: Int, _ i: Int) {',
+                    '    var largest = i',
+                    '    let l = 2 * i + 1',
+                    '    let r = 2 * i + 2',
+                    '    if l < n && arr[l] > arr[largest] {',
+                    '        largest = l',
+                    '    }',
+                    '    if r < n && arr[r] > arr[largest] {',
+                    '        largest = r',
+                    '    }',
+                    '    if largest != i {',
+                    '        arr.swapAt(i, largest)',
+                    '        heapify(&arr, n, largest)',
+                    '    }',
+                    '}',
+                    '',
+                    'func heapSort(_ arr: inout [Int]) {',
+                    '    let n = arr.count',
+                    '    for i in stride(from: n/2 - 1, through: 0, by: -1) {',
+                    '        heapify(&arr, n, i)',
+                    '    }',
+                    '    for i in stride(from: n-1, to: 0, by: -1) {',
+                    '        arr.swapAt(0, i)',
+                    '        heapify(&arr, i, 0)',
+                    '    }',
+                    '}'
+                ],
+                counting: [
+                    'func countingSort(_ arr: [Int]) -> [Int] {',
+                    '    guard let max = arr.max() else { return arr }',
+                    '    var count = Array(repeating: 0, count: max + 1)',
+                    '    var output = Array(repeating: 0, count: arr.count)',
+                    '    for num in arr {',
+                    '        count[num] += 1',
+                    '    }',
+                    '    for i in 1...max {',
+                    '        count[i] += count[i-1]',
+                    '    }',
+                    '    for i in stride(from: arr.count-1, through: 0, by: -1) {',
+                    '        output[count[arr[i]]-1] = arr[i]',
+                    '        count[arr[i]] -= 1',
+                    '    }',
+                    '    return output',
+                    '}'
+                ],
+                bucket: [
+                    'func bucketSort(_ arr: [Int]) -> [Int] {',
+                    '    guard !arr.isEmpty else { return arr }',
+                    '    guard let max = arr.max(), let min = arr.min() else { return arr }',
+                    '    let bucketCount = 10',
+                    '    let bucketRange = (max - min) / bucketCount + 1',
+                    '    var buckets = Array(repeating: [Int](), count: bucketCount)',
+                    '    for num in arr {',
+                    '        let idx = (num - min) / bucketRange',
+                    '        buckets[idx].append(num)',
+                    '    }',
+                    '    var result = [Int]()',
+                    '    for var bucket in buckets {',
+                    '        bucket.sort()',
+                    '        result.append(contentsOf: bucket)',
+                    '    }',
+                    '    return result',
+                    '}'
+                ],
+                radix: [
+                    'func countingSortByDigit(_ arr: [Int], _ exp: Int) -> [Int] {',
+                    '    var output = Array(repeating: 0, count: arr.count)',
+                    '    var count = Array(repeating: 0, count: 10)',
+                    '    for i in 0..<arr.count {',
+                    '        let index = (arr[i] / exp) % 10',
+                    '        count[index] += 1',
+                    '    }',
+                    '    for i in 1..<10 {',
+                    '        count[i] += count[i-1]',
+                    '    }',
+                    '    for i in stride(from: arr.count-1, through: 0, by: -1) {',
+                    '        let index = (arr[i] / exp) % 10',
+                    '        output[count[index]-1] = arr[i]',
+                    '        count[index] -= 1',
+                    '    }',
+                    '    return output',
+                    '}',
+                    '',
+                    'func radixSort(_ arr: [Int]) -> [Int] {',
+                    '    guard let max = arr.max() else { return arr }',
+                    '    var result = arr',
+                    '    var exp = 1',
+                    '    while max / exp > 0 {',
+                    '        result = countingSortByDigit(result, exp)',
+                    '        exp *= 10',
+                    '    }',
+                    '    return result',
+                    '}'
                 ]
             };
-            return templates[currentAlgorithm] || getCodeTemplateCpp();
+            return templates; // 返回完整的templates对象
         }
         
         // 更新实时代码显示
         function updateLiveCodeDisplay(highlightLine = null, state = 'normal') {
+            // 如果正在排序且没有传入参数，使用当前保存的状态
+            if (isSorting && highlightLine === null && currentExecutingLine !== null) {
+                highlightLine = currentExecutingLine;
+                state = currentCodeState;
+            }
+            
+            // 保存当前状态，用于语言切换时保持同步
+            if (highlightLine !== null) {
+                currentExecutingLine = highlightLine;
+                currentCodeState = state;
+            }
+            
             const codeLines = getCodeTemplateForLiveDisplay();
             const liveCodeDisplay = document.getElementById('live-code-display');
             
@@ -2114,6 +3032,10 @@ func radixSort(_ arr: [Int]) -&gt; [Int] {
             originalArray = [...array]; // 保存原始数组
             renderArray();
             currentArraySizeEl.textContent = arraySize;
+            
+            // 确保实时代码显示与当前选择的语言同步
+            updateLiveCodeLanguage(currentCodeLang);
+            updateLiveCodeDisplay();
         }
         
         // 渲染数组
@@ -2243,6 +3165,10 @@ func radixSort(_ arr: [Int]) -&gt; [Int] {
             
             sortingGenerator = null;
             
+            // 清除代码执行状态跟踪
+            currentExecutingLine = null;
+            currentCodeState = 'normal';
+            
             // 恢复原始数组
             if (originalArray.length > 0) {
                 array = [...originalArray];
@@ -2264,7 +3190,8 @@ func radixSort(_ arr: [Int]) -&gt; [Int] {
             // 重新渲染数组
             renderArray();
             
-            // 重置实时代码显示
+            // 重置实时代码显示 - 确保与当前选择的语言同步
+            updateLiveCodeLanguage(currentCodeLang);
             updateLiveCodeDisplay();
         }
         
