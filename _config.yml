@@ -20,6 +20,9 @@ header_pages:
   - product.md       
   - archive.md      # 归档页（需手动创建）
   - about.md        # 关于页
+  - tech.md 
+    - tech1.md
+    - [https://macrong.github.io/archive/](https://macrong.github.io/archive/)
 
 # 分页设置（首页每页显示的文章数量）
 paginate: 0         # 每页5篇文章
