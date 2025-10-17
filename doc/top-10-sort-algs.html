@@ -237,7 +237,7 @@
                         <!-- 实时代码执行显示 -->
                         <div class="mt-6 border-t border-gray-200 pt-4">
                             <div class="flex items-center justify-between mb-3">
-                                <h3 class="text-base font-semibold">实时代码执行 (C++)</h3>
+                                <h3 class="text-base font-semibold">实时代码执行 (<span id="live-code-lang-display">C++</span>)</h3>
                                 <div class="flex items-center gap-3 text-xs">
                                     <div class="flex items-center gap-1.5">
                                         <div class="w-2.5 h-2.5 bg-blue-500 rounded"></div>
@@ -529,6 +529,14 @@
                             block.classList.add('hidden');
                         }
                     });
+                    
+                    // 更新实时代码显示的语言
+                    updateLiveCodeLanguage(lang);
+                    
+                    // 如果正在排序，重新渲染实时代码
+                    if (!isSorting) {
+                        updateLiveCodeDisplay();
+                    }
                 });
             });
             
@@ -1654,8 +1662,38 @@ func radixSort(_ arr: [Int]) -&gt; [Int] {
             };
         }
         
-        // 获取C++代码模板用于实时显示
-        function getCppCodeTemplate() {
+        // 更新实时代码语言显示
+        function updateLiveCodeLanguage(lang) {
+            const langDisplayEl = document.getElementById('live-code-lang-display');
+            const langNames = {
+                'c': 'C',
+                'cpp': 'C++',
+                'python': 'Python',
+                'go': 'Go',
+                'java': 'Java',
+                'swift': 'Swift'
+            };
+            if (langDisplayEl) {
+                langDisplayEl.textContent = langNames[lang] || 'C++';
+            }
+        }
+        
+        // 获取当前语言的代码模板用于实时显示
+        function getCodeTemplateForLiveDisplay() {
+            // 根据当前选中的语言返回相应的代码模板
+            const templates = {
+                'c': getCodeTemplateC(),
+                'cpp': getCodeTemplateCpp(),
+                'python': getCodeTemplatePython(),
+                'go': getCodeTemplateGo(),
+                'java': getCodeTemplateJava(),
+                'swift': getCodeTemplateSwift()
+            };
+            return templates[currentCodeLang] || templates['cpp'];
+        }
+        
+        // C++语言代码模板
+        function getCodeTemplateCpp() {
             const templates = {
                 bubble: [
                     'void bubbleSort(vector<int>& arr) {',
@@ -1827,9 +1865,202 @@ func radixSort(_ arr: [Int]) -&gt; [Int] {
             return templates[currentAlgorithm] || templates.bubble;
         }
         
+        // C语言代码模板 (与C++类似，但使用数组)
+        function getCodeTemplateC() {
+            // C语言使用与C++相同的逻辑，但语法略有不同
+            return getCodeTemplateCpp();
+        }
+        
+        // Python语言代码模板
+        function getCodeTemplatePython() {
+            const templates = {
+                bubble: [
+                    'def bubble_sort(arr):',
+                    '    n = len(arr)',
+                    '    for i in range(n):',
+                    '        for j in range(0, n-i-1):',
+                    '            if arr[j] > arr[j+1]:',
+                    '                arr[j], arr[j+1] = arr[j+1], arr[j]',
+                    '    return arr'
+                ],
+                selection: [
+                    'def selection_sort(arr):',
+                    '    n = len(arr)',
+                    '    for i in range(n-1):',
+                    '        min_idx = i',
+                    '        for j in range(i+1, n):',
+                    '            if arr[j] < arr[min_idx]:',
+                    '                min_idx = j',
+                    '        arr[i], arr[min_idx] = arr[min_idx], arr[i]',
+                    '    return arr'
+                ],
+                insertion: [
+                    'def insertion_sort(arr):',
+                    '    for i in range(1, len(arr)):',
+                    '        key = arr[i]',
+                    '        j = i - 1',
+                    '        while j >= 0 and arr[j] > key:',
+                    '            arr[j + 1] = arr[j]',
+                    '            j -= 1',
+                    '        arr[j + 1] = key',
+                    '    return arr'
+                ]
+            };
+            // 使用C++模板作为默认回退
+            return templates[currentAlgorithm] || getCodeTemplateCpp();
+        }
+        
+        // Go语言代码模板
+        function getCodeTemplateGo() {
+            const templates = {
+                bubble: [
+                    'func bubbleSort(arr []int) {',
+                    '    n := len(arr)',
+                    '    for i := 0; i < n-1; i++ {',
+                    '        for j := 0; j < n-i-1; j++ {',
+                    '            if arr[j] > arr[j+1] {',
+                    '                arr[j], arr[j+1] = arr[j+1], arr[j]',
+                    '            }',
+                    '        }',
+                    '    }',
+                    '}'
+                ],
+                selection: [
+                    'func selectionSort(arr []int) {',
+                    '    n := len(arr)',
+                    '    for i := 0; i < n-1; i++ {',
+                    '        minIdx := i',
+                    '        for j := i + 1; j < n; j++ {',
+                    '            if arr[j] < arr[minIdx] {',
+                    '                minIdx = j',
+                    '            }',
+                    '        }',
+                    '        arr[i], arr[minIdx] = arr[minIdx], arr[i]',
+                    '    }',
+                    '}'
+                ],
+                insertion: [
+                    'func insertionSort(arr []int) {',
+                    '    for i := 1; i < len(arr); i++ {',
+                    '        key := arr[i]',
+                    '        j := i - 1',
+                    '        for j >= 0 && arr[j] > key {',
+                    '            arr[j+1] = arr[j]',
+                    '            j--',
+                    '        }',
+                    '        arr[j+1] = key',
+                    '    }',
+                    '}'
+                ]
+            };
+            return templates[currentAlgorithm] || getCodeTemplateCpp();
+        }
+        
+        // Java语言代码模板
+        function getCodeTemplateJava() {
+            const templates = {
+                bubble: [
+                    'public class BubbleSort {',
+                    '    void bubbleSort(int arr[]) {',
+                    '        int n = arr.length;',
+                    '        for (int i = 0; i < n-1; i++) {',
+                    '            for (int j = 0; j < n-i-1; j++) {',
+                    '                if (arr[j] > arr[j+1]) {',
+                    '                    int temp = arr[j];',
+                    '                    arr[j] = arr[j+1];',
+                    '                    arr[j+1] = temp;',
+                    '                }',
+                    '            }',
+                    '        }',
+                    '    }',
+                    '}'
+                ],
+                selection: [
+                    'public class SelectionSort {',
+                    '    void selectionSort(int arr[]) {',
+                    '        int n = arr.length;',
+                    '        for (int i = 0; i < n-1; i++) {',
+                    '            int minIdx = i;',
+                    '            for (int j = i+1; j < n; j++) {',
+                    '                if (arr[j] < arr[minIdx])',
+                    '                    minIdx = j;',
+                    '            }',
+                    '            int temp = arr[minIdx];',
+                    '            arr[minIdx] = arr[i];',
+                    '            arr[i] = temp;',
+                    '        }',
+                    '    }',
+                    '}'
+                ],
+                insertion: [
+                    'public class InsertionSort {',
+                    '    void insertionSort(int arr[]) {',
+                    '        int n = arr.length;',
+                    '        for (int i = 1; i < n; i++) {',
+                    '            int key = arr[i];',
+                    '            int j = i - 1;',
+                    '            while (j >= 0 && arr[j] > key) {',
+                    '                arr[j + 1] = arr[j];',
+                    '                j--;',
+                    '            }',
+                    '            arr[j + 1] = key;',
+                    '        }',
+                    '    }',
+                    '}'
+                ]
+            };
+            return templates[currentAlgorithm] || getCodeTemplateCpp();
+        }
+        
+        // Swift语言代码模板
+        function getCodeTemplateSwift() {
+            const templates = {
+                bubble: [
+                    'func bubbleSort(_ arr: inout [Int]) {',
+                    '    let n = arr.count',
+                    '    for i in 0..<n-1 {',
+                    '        for j in 0..<n-i-1 {',
+                    '            if arr[j] > arr[j+1] {',
+                    '                arr.swapAt(j, j+1)',
+                    '            }',
+                    '        }',
+                    '    }',
+                    '}'
+                ],
+                selection: [
+                    'func selectionSort(_ arr: inout [Int]) {',
+                    '    let n = arr.count',
+                    '    for i in 0..<n-1 {',
+                    '        var minIdx = i',
+                    '        for j in i+1..<n {',
+                    '            if arr[j] < arr[minIdx] {',
+                    '                minIdx = j',
+                    '            }',
+                    '        }',
+                    '        arr.swapAt(i, minIdx)',
+                    '    }',
+                    '}'
+                ],
+                insertion: [
+                    'func insertionSort(_ arr: inout [Int]) {',
+                    '    for i in 1..<arr.count {',
+                    '        let key = arr[i]',
+                    '        var j = i - 1',
+                    '        while j >= 0 && arr[j] > key {',
+                    '            arr[j + 1] = arr[j]',
+                    '            j -= 1',
+                    '        }',
+                    '        arr[j + 1] = key',
+                    '    }',
+                    '}'
+                ]
+            };
+            return templates[currentAlgorithm] || getCodeTemplateCpp();
+        }
+        
         // 更新实时代码显示
         function updateLiveCodeDisplay(highlightLine = null, state = 'normal') {
-            const codeLines = getCppCodeTemplate();
+            const codeLines = getCodeTemplateForLiveDisplay();
             const liveCodeDisplay = document.getElementById('live-code-display');
             
             if (!liveCodeDisplay) return;
