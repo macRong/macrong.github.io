@@ -1,7 +1,7 @@
 <html lang="zh-CN"><head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>冒泡排序可视化演示</title>
+    <title>十大排序算法可视化演示</title>
     <!-- 引入外部资源 -->
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://cdn.jsdelivr.net/npm/font-awesome@4.7.0/css/font-awesome.min.css" rel="stylesheet">
@@ -63,6 +63,23 @@
             .control-btn-secondary {
                 @apply bg-gray-100 text-gray-800 hover:bg-gray-200 active:bg-gray-300;
             }
+            .code-line {
+                display: block;
+                padding: 0.125rem 0.5rem;
+                transition: all 0.2s ease;
+            }
+            .code-line-current {
+                background-color: rgba(59, 130, 246, 0.2);
+                border-left: 3px solid #3b82f6;
+            }
+            .code-line-comparing {
+                background-color: rgba(249, 115, 22, 0.2);
+                border-left: 3px solid #f97316;
+            }
+            .code-line-swapping {
+                background-color: rgba(239, 68, 68, 0.2);
+                border-left: 3px solid #ef4444;
+            }
         }
     </style>
 </head>
@@ -72,7 +89,7 @@
         <div class="container mx-auto px-4 py-4 flex flex-wrap items-center justify-between">
             <div class="flex items-center gap-2">
                 <i class="fa fa-exchange text-primary text-2xl"></i>
-                <h1 class="text-[clamp(1.25rem,3vw,1.75rem)] font-bold text-gray-800">冒泡排序可视化</h1>
+                <h1 class="text-[clamp(1.25rem,3vw,1.75rem)] font-bold text-gray-800">十大排序算法可视化</h1>
             </div>
             <nav class="hidden md:flex items-center gap-6 mt-4 md:mt-0">
                 <a href="#visualization" class="text-gray-600 hover:text-primary transition-colors">可视化</a>
@@ -101,6 +118,23 @@
                 <div class="lg:col-span-3 space-y-6">
                     <div class="bg-card rounded-xl shadow-md p-5 border border-gray-100">
                         <h2 class="text-lg font-semibold mb-4 pb-2 border-b border-gray-100">控制面板</h2>
+                        
+                        <!-- 算法选择 -->
+                        <div class="mb-5">
+                            <label class="block text-sm font-medium text-gray-700 mb-2">选择排序算法</label>
+                            <select id="algorithm-select" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent">
+                                <option value="bubble">冒泡排序 (Bubble Sort)</option>
+                                <option value="selection">选择排序 (Selection Sort)</option>
+                                <option value="insertion">插入排序 (Insertion Sort)</option>
+                                <option value="shell">希尔排序 (Shell Sort)</option>
+                                <option value="merge">归并排序 (Merge Sort)</option>
+                                <option value="quick">快速排序 (Quick Sort)</option>
+                                <option value="heap">堆排序 (Heap Sort)</option>
+                                <option value="counting">计数排序 (Counting Sort)</option>
+                                <option value="bucket">桶排序 (Bucket Sort)</option>
+                                <option value="radix">基数排序 (Radix Sort)</option>
+                            </select>
+                        </div>
                         
                         <!-- 控制按钮组 -->
                         <div class="grid grid-cols-2 gap-3 mb-5">
@@ -177,7 +211,7 @@
                 <!-- 中间可视化区域 -->
                 <div class="lg:col-span-9">
                     <div class="bg-card rounded-xl shadow-md p-5 border border-gray-100 h-full">
-                        <h2 class="text-lg font-semibold mb-4 pb-2 border-b border-gray-100">排序过程可视化</h2>
+                        <h2 class="text-lg font-semibold mb-4 pb-2 border-b border-gray-100">排序过程可视化 - <span id="current-algorithm-name">冒泡排序</span></h2>
                         <div class="flex items-end justify-center gap-[2px] md:gap-[4px] h-[400px] w-full p-2 md:p-4 overflow-x-auto" id="visualization-container">
                             <!-- 排序可视化元素将在这里动态生成 -->
                         </div>
@@ -199,6 +233,30 @@
                                 <span>已排序</span>
                             </div>
                         </div>
+                        
+                        <!-- 实时代码执行显示 -->
+                        <div class="mt-6 border-t border-gray-200 pt-4">
+                            <div class="flex items-center justify-between mb-3">
+                                <h3 class="text-base font-semibold">实时代码执行 (C++)</h3>
+                                <div class="flex items-center gap-3 text-xs">
+                                    <div class="flex items-center gap-1.5">
+                                        <div class="w-2.5 h-2.5 bg-blue-500 rounded"></div>
+                                        <span>当前行</span>
+                                    </div>
+                                    <div class="flex items-center gap-1.5">
+                                        <div class="w-2.5 h-2.5 bg-comparing rounded"></div>
+                                        <span>比较操作</span>
+                                    </div>
+                                    <div class="flex items-center gap-1.5">
+                                        <div class="w-2.5 h-2.5 bg-swapping rounded"></div>
+                                        <span>交换操作</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="bg-gray-900 rounded-lg p-3 overflow-x-auto">
+                                <pre class="font-code text-xs" id="live-code-display"><code class="text-gray-300">选择一个算法并开始排序以查看实时代码执行...</code></pre>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -207,91 +265,23 @@
         <!-- 代码展示区域 -->
         <section id="code" class="mb-12">
             <div class="bg-card rounded-xl shadow-md p-5 border border-gray-100">
-                <h2 class="text-xl font-semibold mb-4">冒泡排序代码实现</h2>
+                <h2 class="text-xl font-semibold mb-4"><span id="code-algorithm-name">冒泡排序</span>代码实现</h2>
                 
                 <!-- 代码标签页 -->
                 <div class="border-b border-gray-200 mb-4">
                     <div class="flex overflow-x-auto space-x-1 md:space-x-4">
                         <button class="code-tab py-2 px-4 border-b-2 border-primary text-primary font-medium" data-lang="c">C</button>
+                        <button class="code-tab py-2 px-4 border-b-2 border-transparent text-gray-500 hover:text-gray-700" data-lang="cpp">C++</button>
                         <button class="code-tab py-2 px-4 border-b-2 border-transparent text-gray-500 hover:text-gray-700" data-lang="python">Python</button>
                         <button class="code-tab py-2 px-4 border-b-2 border-transparent text-gray-500 hover:text-gray-700" data-lang="go">Go</button>
                         <button class="code-tab py-2 px-4 border-b-2 border-transparent text-gray-500 hover:text-gray-700" data-lang="java">Java</button>
+                        <button class="code-tab py-2 px-4 border-b-2 border-transparent text-gray-500 hover:text-gray-700" data-lang="swift">Swift</button>
                     </div>
                 </div>
                 
                 <!-- 代码内容区域 -->
-                <div class="code-content">
-                    <!-- C代码 -->
-                    <div class="code-block font-code text-sm md:text-base" data-lang="c">
-<pre class="bg-gray-50 p-4 rounded-lg overflow-x-auto"><code>void bubbleSort(int arr[], int n) {
-    int i, j;
-    for (i = 0; i &lt; n-1; i++) {
-        // 最后i个元素已经就位
-        for (j = 0; j &lt; n-i-1; j++) {
-            // 从0到n-i-1遍历
-            if (arr[j] &gt; arr[j+1]) {
-                // 交换元素
-                int temp = arr[j];
-                arr[j] = arr[j+1];
-                arr[j+1] = temp;
-            }
-        }
-    }
-}</code></pre>
-                    </div>
-                    
-                    <!-- Python代码 -->
-                    <div class="code-block font-code text-sm md:text-base hidden" data-lang="python">
-<pre class="bg-gray-50 p-4 rounded-lg overflow-x-auto"><code>def bubble_sort(arr):
-    n = len(arr)
-    # 遍历所有数组元素
-    for i in range(n):
-        # 最后i个元素已经就位
-        for j in range(0, n-i-1):
-            # 从0到n-i-1遍历
-            if arr[j] &gt; arr[j+1]:
-                # 交换元素
-                arr[j], arr[j+1] = arr[j+1], arr[j]
-    return arr</code></pre>
-                    </div>
-                    
-                    <!-- Go代码 -->
-                    <div class="code-block font-code text-sm md:text-base hidden" data-lang="go">
-<pre class="bg-gray-50 p-4 rounded-lg overflow-x-auto"><code>func bubbleSort(arr []int) {
-    n := len(arr)
-    for i := 0; i &lt; n-1; i++ {
-        // 最后i个元素已经就位
-        for j := 0; j &lt; n-i-1; j++ {
-            // 从0到n-i-1遍历
-            if arr[j] &gt; arr[j+1] {
-                // 交换元素
-                arr[j], arr[j+1] = arr[j+1], arr[j]
-            }
-        }
-    }
-}</code></pre>
-                    </div>
-                    
-                    <!-- Java代码 -->
-                    <div class="code-block font-code text-sm md:text-base hidden" data-lang="java">
-<pre class="bg-gray-50 p-4 rounded-lg overflow-x-auto"><code>public class BubbleSort {
-    void bubbleSort(int arr[]) {
-        int n = arr.length;
-        for (int i = 0; i &lt; n-1; i++) {
-            // 最后i个元素已经就位
-            for (int j = 0; j &lt; n-i-1; j++) {
-                // 从0到n-i-1遍历
-                if (arr[j] &gt; arr[j+1]) {
-                    // 交换元素
-                    int temp = arr[j];
-                    arr[j] = arr[j+1];
-                    arr[j+1] = temp;
-                }
-            }
-        }
-    }
-}</code></pre>
-                    </div>
+                <div class="code-content" id="code-content-container">
+                    <!-- Code will be dynamically generated here -->
                 </div>
             </div>
         </section>
@@ -299,7 +289,7 @@
         <!-- 算法说明区域 -->
         <section id="explanation" class="mb-12">
             <div class="bg-card rounded-xl shadow-md p-5 border border-gray-100">
-                <h2 class="text-xl font-semibold mb-6">冒泡排序算法说明</h2>
+                <h2 class="text-xl font-semibold mb-6"><span id="explanation-algorithm-name">冒泡排序</span>算法说明</h2>
                 
                 <!-- 算法原理 -->
                 <div class="mb-8">
@@ -421,8 +411,8 @@
 
     <footer class="bg-white border-t border-gray-200 py-6">
         <div class="container mx-auto px-4 text-center text-gray-600 text-sm">
-            <p>冒泡排序可视化演示 © 2023</p>
-            <p class="mt-1">一个直观展示冒泡排序算法工作原理的交互式工具</p>
+            <p>十大排序算法可视化演示 © 2023</p>
+            <p class="mt-1">一个直观展示十大经典排序算法工作原理的交互式工具</p>
         </div>
     </footer>
 
@@ -430,6 +420,7 @@
     <script>
         // 全局变量
         let array = [];
+        let originalArray = []; // 保存原始数组，用于重置
         let arraySize = 20;
         let sortSpeed = 100; // 毫秒
         let isSorting = false;
@@ -438,6 +429,11 @@
         let swapCount = 0;
         let animationId = null;
         let displayStyle = 'bar';
+        let currentAlgorithm = 'bubble';
+        let sortingGenerator = null; // 用于存储排序生成器
+        let currentCodeLang = 'c'; // 当前选中的代码语言
+        let currentExecutingLine = null; // 当前执行的代码行
+        let currentCodeState = 'normal'; // normal, comparing, swapping
         
         // DOM 元素
         const visualizationContainer = document.getElementById('visualization-container');
@@ -457,15 +453,32 @@
         const codeTabs = document.querySelectorAll('.code-tab');
         const codeBlocks = document.querySelectorAll('.code-block');
         const displayStyleRadios = document.querySelectorAll('input[name="display-style"]');
+        const algorithmSelect = document.getElementById('algorithm-select');
+        const currentAlgorithmName = document.getElementById('current-algorithm-name');
+        const codeAlgorithmName = document.getElementById('code-algorithm-name');
+        const explanationAlgorithmName = document.getElementById('explanation-algorithm-name');
         
         // 初始化
         window.addEventListener('DOMContentLoaded', () => {
             createNewArray();
             setupEventListeners();
+            renderCodeBlocks(); // 初始化代码块
+            updateLiveCodeDisplay(); // 初始化实时代码显示
         });
         
         // 设置事件监听器
         function setupEventListeners() {
+            // 算法选择
+            algorithmSelect.addEventListener('change', (e) => {
+                if (!isSorting) {
+                    currentAlgorithm = e.target.value;
+                    updateAlgorithmNames();
+                    renderCodeBlocks(); // 更新代码显示
+                    updateLiveCodeDisplay(); // 更新实时代码显示
+                    resetSort();
+                }
+            });
+            
             // 数组大小滑块
             arraySizeSlider.addEventListener('input', (e) => {
                 if (!isSorting) {
@@ -497,6 +510,7 @@
             codeTabs.forEach(tab => {
                 tab.addEventListener('click', () => {
                     const lang = tab.getAttribute('data-lang');
+                    currentCodeLang = lang;
                     
                     // 更新标签样式
                     codeTabs.forEach(t => {
@@ -507,6 +521,7 @@
                     tab.classList.add('border-primary', 'text-primary');
                     
                     // 显示对应代码块
+                    const codeBlocks = document.querySelectorAll('.code-block');
                     codeBlocks.forEach(block => {
                         if (block.getAttribute('data-lang') === lang) {
                             block.classList.remove('hidden');
@@ -540,6 +555,1323 @@
             });
         }
         
+        // 更新算法名称显示
+        function updateAlgorithmNames() {
+            const algorithmNames = {
+                'bubble': '冒泡排序',
+                'selection': '选择排序',
+                'insertion': '插入排序',
+                'shell': '希尔排序',
+                'merge': '归并排序',
+                'quick': '快速排序',
+                'heap': '堆排序',
+                'counting': '计数排序',
+                'bucket': '桶排序',
+                'radix': '基数排序'
+            };
+            const name = algorithmNames[currentAlgorithm] || '冒泡排序';
+            currentAlgorithmName.textContent = name;
+            codeAlgorithmName.textContent = name;
+            explanationAlgorithmName.textContent = name;
+        }
+        
+        // 渲染代码块
+        function renderCodeBlocks() {
+            const codeData = getCodeExamples();
+            const container = document.getElementById('code-content-container');
+            container.innerHTML = '';
+            
+            const languages = ['c', 'cpp', 'python', 'go', 'java', 'swift'];
+            
+            languages.forEach((lang, index) => {
+                const codeBlock = document.createElement('div');
+                codeBlock.className = `code-block font-code text-sm md:text-base${index === 0 ? '' : ' hidden'}`;
+                codeBlock.setAttribute('data-lang', lang);
+                
+                const pre = document.createElement('pre');
+                pre.className = 'bg-gray-50 p-4 rounded-lg overflow-x-auto';
+                
+                const code = document.createElement('code');
+                code.innerHTML = codeData[currentAlgorithm][lang];
+                
+                pre.appendChild(code);
+                codeBlock.appendChild(pre);
+                container.appendChild(codeBlock);
+            });
+        }
+        
+        // 获取代码示例
+        function getCodeExamples() {
+            return {
+                bubble: {
+                    c: `void bubbleSort(int arr[], int n) {
+    int i, j;
+    for (i = 0; i &lt; n-1; i++) {
+        for (j = 0; j &lt; n-i-1; j++) {
+            if (arr[j] &gt; arr[j+1]) {
+                int temp = arr[j];
+                arr[j] = arr[j+1];
+                arr[j+1] = temp;
+            }
+        }
+    }
+}`,
+                    cpp: `void bubbleSort(vector&lt;int&gt;&amp; arr) {
+    int n = arr.size();
+    for (int i = 0; i &lt; n-1; i++) {
+        for (int j = 0; j &lt; n-i-1; j++) {
+            if (arr[j] &gt; arr[j+1]) {
+                swap(arr[j], arr[j+1]);
+            }
+        }
+    }
+}`,
+                    python: `def bubble_sort(arr):
+    n = len(arr)
+    for i in range(n):
+        for j in range(0, n-i-1):
+            if arr[j] &gt; arr[j+1]:
+                arr[j], arr[j+1] = arr[j+1], arr[j]
+    return arr`,
+                    go: `func bubbleSort(arr []int) {
+    n := len(arr)
+    for i := 0; i &lt; n-1; i++ {
+        for j := 0; j &lt; n-i-1; j++ {
+            if arr[j] &gt; arr[j+1] {
+                arr[j], arr[j+1] = arr[j+1], arr[j]
+            }
+        }
+    }
+}`,
+                    java: `public class BubbleSort {
+    void bubbleSort(int arr[]) {
+        int n = arr.length;
+        for (int i = 0; i &lt; n-1; i++) {
+            for (int j = 0; j &lt; n-i-1; j++) {
+                if (arr[j] &gt; arr[j+1]) {
+                    int temp = arr[j];
+                    arr[j] = arr[j+1];
+                    arr[j+1] = temp;
+                }
+            }
+        }
+    }
+}`,
+                    swift: `func bubbleSort(_ arr: inout [Int]) {
+    let n = arr.count
+    for i in 0..&lt;n-1 {
+        for j in 0..&lt;n-i-1 {
+            if arr[j] &gt; arr[j+1] {
+                arr.swapAt(j, j+1)
+            }
+        }
+    }
+}`
+                },
+                selection: {
+                    c: `void selectionSort(int arr[], int n) {
+    int i, j, minIdx;
+    for (i = 0; i &lt; n-1; i++) {
+        minIdx = i;
+        for (j = i+1; j &lt; n; j++) {
+            if (arr[j] &lt; arr[minIdx])
+                minIdx = j;
+        }
+        int temp = arr[minIdx];
+        arr[minIdx] = arr[i];
+        arr[i] = temp;
+    }
+}`,
+                    cpp: `void selectionSort(vector&lt;int&gt;&amp; arr) {
+    int n = arr.size();
+    for (int i = 0; i &lt; n-1; i++) {
+        int minIdx = i;
+        for (int j = i+1; j &lt; n; j++) {
+            if (arr[j] &lt; arr[minIdx])
+                minIdx = j;
+        }
+        swap(arr[minIdx], arr[i]);
+    }
+}`,
+                    python: `def selection_sort(arr):
+    n = len(arr)
+    for i in range(n-1):
+        min_idx = i
+        for j in range(i+1, n):
+            if arr[j] &lt; arr[min_idx]:
+                min_idx = j
+        arr[i], arr[min_idx] = arr[min_idx], arr[i]
+    return arr`,
+                    go: `func selectionSort(arr []int) {
+    n := len(arr)
+    for i := 0; i &lt; n-1; i++ {
+        minIdx := i
+        for j := i + 1; j &lt; n; j++ {
+            if arr[j] &lt; arr[minIdx] {
+                minIdx = j
+            }
+        }
+        arr[i], arr[minIdx] = arr[minIdx], arr[i]
+    }
+}`,
+                    java: `public class SelectionSort {
+    void selectionSort(int arr[]) {
+        int n = arr.length;
+        for (int i = 0; i &lt; n-1; i++) {
+            int minIdx = i;
+            for (int j = i+1; j &lt; n; j++) {
+                if (arr[j] &lt; arr[minIdx])
+                    minIdx = j;
+            }
+            int temp = arr[minIdx];
+            arr[minIdx] = arr[i];
+            arr[i] = temp;
+        }
+    }
+}`,
+                    swift: `func selectionSort(_ arr: inout [Int]) {
+    let n = arr.count
+    for i in 0..&lt;n-1 {
+        var minIdx = i
+        for j in i+1..&lt;n {
+            if arr[j] &lt; arr[minIdx] {
+                minIdx = j
+            }
+        }
+        arr.swapAt(i, minIdx)
+    }
+}`
+                },
+                insertion: {
+                    c: `void insertionSort(int arr[], int n) {
+    int i, key, j;
+    for (i = 1; i &lt; n; i++) {
+        key = arr[i];
+        j = i - 1;
+        while (j &gt;= 0 &amp;&amp; arr[j] &gt; key) {
+            arr[j + 1] = arr[j];
+            j = j - 1;
+        }
+        arr[j + 1] = key;
+    }
+}`,
+                    cpp: `void insertionSort(vector&lt;int&gt;&amp; arr) {
+    int n = arr.size();
+    for (int i = 1; i &lt; n; i++) {
+        int key = arr[i];
+        int j = i - 1;
+        while (j &gt;= 0 &amp;&amp; arr[j] &gt; key) {
+            arr[j + 1] = arr[j];
+            j--;
+        }
+        arr[j + 1] = key;
+    }
+}`,
+                    python: `def insertion_sort(arr):
+    for i in range(1, len(arr)):
+        key = arr[i]
+        j = i - 1
+        while j &gt;= 0 and arr[j] &gt; key:
+            arr[j + 1] = arr[j]
+            j -= 1
+        arr[j + 1] = key
+    return arr`,
+                    go: `func insertionSort(arr []int) {
+    for i := 1; i &lt; len(arr); i++ {
+        key := arr[i]
+        j := i - 1
+        for j &gt;= 0 &amp;&amp; arr[j] &gt; key {
+            arr[j+1] = arr[j]
+            j--
+        }
+        arr[j+1] = key
+    }
+}`,
+                    java: `public class InsertionSort {
+    void insertionSort(int arr[]) {
+        int n = arr.length;
+        for (int i = 1; i &lt; n; i++) {
+            int key = arr[i];
+            int j = i - 1;
+            while (j &gt;= 0 &amp;&amp; arr[j] &gt; key) {
+                arr[j + 1] = arr[j];
+                j--;
+            }
+            arr[j + 1] = key;
+        }
+    }
+}`,
+                    swift: `func insertionSort(_ arr: inout [Int]) {
+    for i in 1..&lt;arr.count {
+        let key = arr[i]
+        var j = i - 1
+        while j &gt;= 0 &amp;&amp; arr[j] &gt; key {
+            arr[j + 1] = arr[j]
+            j -= 1
+        }
+        arr[j + 1] = key
+    }
+}`
+                },
+                shell: {
+                    c: `void shellSort(int arr[], int n) {
+    for (int gap = n/2; gap &gt; 0; gap /= 2) {
+        for (int i = gap; i &lt; n; i++) {
+            int temp = arr[i];
+            int j;
+            for (j = i; j &gt;= gap &amp;&amp; arr[j-gap] &gt; temp; j -= gap)
+                arr[j] = arr[j - gap];
+            arr[j] = temp;
+        }
+    }
+}`,
+                    cpp: `void shellSort(vector&lt;int&gt;&amp; arr) {
+    int n = arr.size();
+    for (int gap = n/2; gap &gt; 0; gap /= 2) {
+        for (int i = gap; i &lt; n; i++) {
+            int temp = arr[i];
+            int j;
+            for (j = i; j &gt;= gap &amp;&amp; arr[j-gap] &gt; temp; j -= gap)
+                arr[j] = arr[j - gap];
+            arr[j] = temp;
+        }
+    }
+}`,
+                    python: `def shell_sort(arr):
+    n = len(arr)
+    gap = n // 2
+    while gap &gt; 0:
+        for i in range(gap, n):
+            temp = arr[i]
+            j = i
+            while j &gt;= gap and arr[j - gap] &gt; temp:
+                arr[j] = arr[j - gap]
+                j -= gap
+            arr[j] = temp
+        gap //= 2
+    return arr`,
+                    go: `func shellSort(arr []int) {
+    n := len(arr)
+    for gap := n / 2; gap &gt; 0; gap /= 2 {
+        for i := gap; i &lt; n; i++ {
+            temp := arr[i]
+            j := i
+            for j &gt;= gap &amp;&amp; arr[j-gap] &gt; temp {
+                arr[j] = arr[j-gap]
+                j -= gap
+            }
+            arr[j] = temp
+        }
+    }
+}`,
+                    java: `public class ShellSort {
+    void shellSort(int arr[]) {
+        int n = arr.length;
+        for (int gap = n/2; gap &gt; 0; gap /= 2) {
+            for (int i = gap; i &lt; n; i++) {
+                int temp = arr[i];
+                int j;
+                for (j = i; j &gt;= gap &amp;&amp; arr[j-gap] &gt; temp; j -= gap)
+                    arr[j] = arr[j - gap];
+                arr[j] = temp;
+            }
+        }
+    }
+}`,
+                    swift: `func shellSort(_ arr: inout [Int]) {
+    var gap = arr.count / 2
+    while gap &gt; 0 {
+        for i in gap..&lt;arr.count {
+            let temp = arr[i]
+            var j = i
+            while j &gt;= gap &amp;&amp; arr[j - gap] &gt; temp {
+                arr[j] = arr[j - gap]
+                j -= gap
+            }
+            arr[j] = temp
+        }
+        gap /= 2
+    }
+}`
+                },
+                merge: {
+                    c: `void merge(int arr[], int l, int m, int r) {
+    int n1 = m - l + 1, n2 = r - m;
+    int L[n1], R[n2];
+    for (int i = 0; i &lt; n1; i++) L[i] = arr[l + i];
+    for (int j = 0; j &lt; n2; j++) R[j] = arr[m + 1 + j];
+    int i = 0, j = 0, k = l;
+    while (i &lt; n1 &amp;&amp; j &lt; n2)
+        arr[k++] = (L[i] &lt;= R[j]) ? L[i++] : R[j++];
+    while (i &lt; n1) arr[k++] = L[i++];
+    while (j &lt; n2) arr[k++] = R[j++];
+}
+
+void mergeSort(int arr[], int l, int r) {
+    if (l &lt; r) {
+        int m = l + (r - l) / 2;
+        mergeSort(arr, l, m);
+        mergeSort(arr, m + 1, r);
+        merge(arr, l, m, r);
+    }
+}`,
+                    cpp: `void merge(vector&lt;int&gt;&amp; arr, int l, int m, int r) {
+    vector&lt;int&gt; L(arr.begin() + l, arr.begin() + m + 1);
+    vector&lt;int&gt; R(arr.begin() + m + 1, arr.begin() + r + 1);
+    int i = 0, j = 0, k = l;
+    while (i &lt; L.size() &amp;&amp; j &lt; R.size())
+        arr[k++] = (L[i] &lt;= R[j]) ? L[i++] : R[j++];
+    while (i &lt; L.size()) arr[k++] = L[i++];
+    while (j &lt; R.size()) arr[k++] = R[j++];
+}
+
+void mergeSort(vector&lt;int&gt;&amp; arr, int l, int r) {
+    if (l &lt; r) {
+        int m = l + (r - l) / 2;
+        mergeSort(arr, l, m);
+        mergeSort(arr, m + 1, r);
+        merge(arr, l, m, r);
+    }
+}`,
+                    python: `def merge_sort(arr):
+    if len(arr) &gt; 1:
+        mid = len(arr) // 2
+        L, R = arr[:mid], arr[mid:]
+        merge_sort(L)
+        merge_sort(R)
+        i = j = k = 0
+        while i &lt; len(L) and j &lt; len(R):
+            if L[i] &lt;= R[j]:
+                arr[k] = L[i]
+                i += 1
+            else:
+                arr[k] = R[j]
+                j += 1
+            k += 1
+        while i &lt; len(L):
+            arr[k] = L[i]
+            i += 1
+            k += 1
+        while j &lt; len(R):
+            arr[k] = R[j]
+            j += 1
+            k += 1
+    return arr`,
+                    go: `func merge(arr []int, l, m, r int) {
+    n1, n2 := m-l+1, r-m
+    L := make([]int, n1)
+    R := make([]int, n2)
+    copy(L, arr[l:m+1])
+    copy(R, arr[m+1:r+1])
+    i, j, k := 0, 0, l
+    for i &lt; n1 &amp;&amp; j &lt; n2 {
+        if L[i] &lt;= R[j] {
+            arr[k] = L[i]
+            i++
+        } else {
+            arr[k] = R[j]
+            j++
+        }
+        k++
+    }
+    for i &lt; n1 {
+        arr[k] = L[i]
+        i++
+        k++
+    }
+    for j &lt; n2 {
+        arr[k] = R[j]
+        j++
+        k++
+    }
+}
+
+func mergeSort(arr []int, l, r int) {
+    if l &lt; r {
+        m := l + (r-l)/2
+        mergeSort(arr, l, m)
+        mergeSort(arr, m+1, r)
+        merge(arr, l, m, r)
+    }
+}`,
+                    java: `public class MergeSort {
+    void merge(int arr[], int l, int m, int r) {
+        int n1 = m - l + 1, n2 = r - m;
+        int L[] = new int[n1], R[] = new int[n2];
+        for (int i = 0; i &lt; n1; i++) L[i] = arr[l + i];
+        for (int j = 0; j &lt; n2; j++) R[j] = arr[m + 1 + j];
+        int i = 0, j = 0, k = l;
+        while (i &lt; n1 &amp;&amp; j &lt; n2)
+            arr[k++] = (L[i] &lt;= R[j]) ? L[i++] : R[j++];
+        while (i &lt; n1) arr[k++] = L[i++];
+        while (j &lt; n2) arr[k++] = R[j++];
+    }
+    
+    void mergeSort(int arr[], int l, int r) {
+        if (l &lt; r) {
+            int m = l + (r - l) / 2;
+            mergeSort(arr, l, m);
+            mergeSort(arr, m + 1, r);
+            merge(arr, l, m, r);
+        }
+    }
+}`,
+                    swift: `func mergeSort(_ arr: inout [Int], _ l: Int, _ r: Int) {
+    if l &lt; r {
+        let m = l + (r - l) / 2
+        mergeSort(&amp;arr, l, m)
+        mergeSort(&amp;arr, m + 1, r)
+        merge(&amp;arr, l, m, r)
+    }
+}
+
+func merge(_ arr: inout [Int], _ l: Int, _ m: Int, _ r: Int) {
+    let L = Array(arr[l...m])
+    let R = Array(arr[m+1...r])
+    var i = 0, j = 0, k = l
+    while i &lt; L.count &amp;&amp; j &lt; R.count {
+        arr[k] = (L[i] &lt;= R[j]) ? L[i] : R[j]
+        if L[i] &lt;= R[j] { i += 1 } else { j += 1 }
+        k += 1
+    }
+    while i &lt; L.count { arr[k] = L[i]; i += 1; k += 1 }
+    while j &lt; R.count { arr[k] = R[j]; j += 1; k += 1 }
+}`
+                },
+                quick: {
+                    c: `int partition(int arr[], int low, int high) {
+    int pivot = arr[high];
+    int i = low - 1;
+    for (int j = low; j &lt; high; j++) {
+        if (arr[j] &lt; pivot) {
+            i++;
+            int temp = arr[i];
+            arr[i] = arr[j];
+            arr[j] = temp;
+        }
+    }
+    int temp = arr[i + 1];
+    arr[i + 1] = arr[high];
+    arr[high] = temp;
+    return i + 1;
+}
+
+void quickSort(int arr[], int low, int high) {
+    if (low &lt; high) {
+        int pi = partition(arr, low, high);
+        quickSort(arr, low, pi - 1);
+        quickSort(arr, pi + 1, high);
+    }
+}`,
+                    cpp: `int partition(vector&lt;int&gt;&amp; arr, int low, int high) {
+    int pivot = arr[high];
+    int i = low - 1;
+    for (int j = low; j &lt; high; j++) {
+        if (arr[j] &lt; pivot) {
+            i++;
+            swap(arr[i], arr[j]);
+        }
+    }
+    swap(arr[i + 1], arr[high]);
+    return i + 1;
+}
+
+void quickSort(vector&lt;int&gt;&amp; arr, int low, int high) {
+    if (low &lt; high) {
+        int pi = partition(arr, low, high);
+        quickSort(arr, low, pi - 1);
+        quickSort(arr, pi + 1, high);
+    }
+}`,
+                    python: `def quick_sort(arr, low=0, high=None):
+    if high is None:
+        high = len(arr) - 1
+    if low &lt; high:
+        pi = partition(arr, low, high)
+        quick_sort(arr, low, pi - 1)
+        quick_sort(arr, pi + 1, high)
+    return arr
+
+def partition(arr, low, high):
+    pivot = arr[high]
+    i = low - 1
+    for j in range(low, high):
+        if arr[j] &lt; pivot:
+            i += 1
+            arr[i], arr[j] = arr[j], arr[i]
+    arr[i + 1], arr[high] = arr[high], arr[i + 1]
+    return i + 1`,
+                    go: `func partition(arr []int, low, high int) int {
+    pivot := arr[high]
+    i := low - 1
+    for j := low; j &lt; high; j++ {
+        if arr[j] &lt; pivot {
+            i++
+            arr[i], arr[j] = arr[j], arr[i]
+        }
+    }
+    arr[i+1], arr[high] = arr[high], arr[i+1]
+    return i + 1
+}
+
+func quickSort(arr []int, low, high int) {
+    if low &lt; high {
+        pi := partition(arr, low, high)
+        quickSort(arr, low, pi-1)
+        quickSort(arr, pi+1, high)
+    }
+}`,
+                    java: `public class QuickSort {
+    int partition(int arr[], int low, int high) {
+        int pivot = arr[high];
+        int i = low - 1;
+        for (int j = low; j &lt; high; j++) {
+            if (arr[j] &lt; pivot) {
+                i++;
+                int temp = arr[i];
+                arr[i] = arr[j];
+                arr[j] = temp;
+            }
+        }
+        int temp = arr[i + 1];
+        arr[i + 1] = arr[high];
+        arr[high] = temp;
+        return i + 1;
+    }
+    
+    void quickSort(int arr[], int low, int high) {
+        if (low &lt; high) {
+            int pi = partition(arr, low, high);
+            quickSort(arr, low, pi - 1);
+            quickSort(arr, pi + 1, high);
+        }
+    }
+}`,
+                    swift: `func quickSort(_ arr: inout [Int], _ low: Int, _ high: Int) {
+    if low &lt; high {
+        let pi = partition(&amp;arr, low, high)
+        quickSort(&amp;arr, low, pi - 1)
+        quickSort(&amp;arr, pi + 1, high)
+    }
+}
+
+func partition(_ arr: inout [Int], _ low: Int, _ high: Int) -&gt; Int {
+    let pivot = arr[high]
+    var i = low - 1
+    for j in low..&lt;high {
+        if arr[j] &lt; pivot {
+            i += 1
+            arr.swapAt(i, j)
+        }
+    }
+    arr.swapAt(i + 1, high)
+    return i + 1
+}`
+                },
+                heap: {
+                    c: `void heapify(int arr[], int n, int i) {
+    int largest = i, l = 2*i + 1, r = 2*i + 2;
+    if (l &lt; n &amp;&amp; arr[l] &gt; arr[largest]) largest = l;
+    if (r &lt; n &amp;&amp; arr[r] &gt; arr[largest]) largest = r;
+    if (largest != i) {
+        int temp = arr[i];
+        arr[i] = arr[largest];
+        arr[largest] = temp;
+        heapify(arr, n, largest);
+    }
+}
+
+void heapSort(int arr[], int n) {
+    for (int i = n/2 - 1; i &gt;= 0; i--)
+        heapify(arr, n, i);
+    for (int i = n-1; i &gt; 0; i--) {
+        int temp = arr[0];
+        arr[0] = arr[i];
+        arr[i] = temp;
+        heapify(arr, i, 0);
+    }
+}`,
+                    cpp: `void heapify(vector&lt;int&gt;&amp; arr, int n, int i) {
+    int largest = i, l = 2*i + 1, r = 2*i + 2;
+    if (l &lt; n &amp;&amp; arr[l] &gt; arr[largest]) largest = l;
+    if (r &lt; n &amp;&amp; arr[r] &gt; arr[largest]) largest = r;
+    if (largest != i) {
+        swap(arr[i], arr[largest]);
+        heapify(arr, n, largest);
+    }
+}
+
+void heapSort(vector&lt;int&gt;&amp; arr) {
+    int n = arr.size();
+    for (int i = n/2 - 1; i &gt;= 0; i--)
+        heapify(arr, n, i);
+    for (int i = n-1; i &gt; 0; i--) {
+        swap(arr[0], arr[i]);
+        heapify(arr, i, 0);
+    }
+}`,
+                    python: `def heapify(arr, n, i):
+    largest = i
+    l, r = 2*i + 1, 2*i + 2
+    if l &lt; n and arr[l] &gt; arr[largest]:
+        largest = l
+    if r &lt; n and arr[r] &gt; arr[largest]:
+        largest = r
+    if largest != i:
+        arr[i], arr[largest] = arr[largest], arr[i]
+        heapify(arr, n, largest)
+
+def heap_sort(arr):
+    n = len(arr)
+    for i in range(n//2 - 1, -1, -1):
+        heapify(arr, n, i)
+    for i in range(n-1, 0, -1):
+        arr[0], arr[i] = arr[i], arr[0]
+        heapify(arr, i, 0)
+    return arr`,
+                    go: `func heapify(arr []int, n, i int) {
+    largest := i
+    l, r := 2*i+1, 2*i+2
+    if l &lt; n &amp;&amp; arr[l] &gt; arr[largest] {
+        largest = l
+    }
+    if r &lt; n &amp;&amp; arr[r] &gt; arr[largest] {
+        largest = r
+    }
+    if largest != i {
+        arr[i], arr[largest] = arr[largest], arr[i]
+        heapify(arr, n, largest)
+    }
+}
+
+func heapSort(arr []int) {
+    n := len(arr)
+    for i := n/2 - 1; i &gt;= 0; i-- {
+        heapify(arr, n, i)
+    }
+    for i := n - 1; i &gt; 0; i-- {
+        arr[0], arr[i] = arr[i], arr[0]
+        heapify(arr, i, 0)
+    }
+}`,
+                    java: `public class HeapSort {
+    void heapify(int arr[], int n, int i) {
+        int largest = i, l = 2*i + 1, r = 2*i + 2;
+        if (l &lt; n &amp;&amp; arr[l] &gt; arr[largest]) largest = l;
+        if (r &lt; n &amp;&amp; arr[r] &gt; arr[largest]) largest = r;
+        if (largest != i) {
+            int temp = arr[i];
+            arr[i] = arr[largest];
+            arr[largest] = temp;
+            heapify(arr, n, largest);
+        }
+    }
+    
+    void heapSort(int arr[]) {
+        int n = arr.length;
+        for (int i = n/2 - 1; i &gt;= 0; i--)
+            heapify(arr, n, i);
+        for (int i = n-1; i &gt; 0; i--) {
+            int temp = arr[0];
+            arr[0] = arr[i];
+            arr[i] = temp;
+            heapify(arr, i, 0);
+        }
+    }
+}`,
+                    swift: `func heapify(_ arr: inout [Int], _ n: Int, _ i: Int) {
+    var largest = i
+    let l = 2 * i + 1
+    let r = 2 * i + 2
+    if l &lt; n &amp;&amp; arr[l] &gt; arr[largest] {
+        largest = l
+    }
+    if r &lt; n &amp;&amp; arr[r] &gt; arr[largest] {
+        largest = r
+    }
+    if largest != i {
+        arr.swapAt(i, largest)
+        heapify(&amp;arr, n, largest)
+    }
+}
+
+func heapSort(_ arr: inout [Int]) {
+    let n = arr.count
+    for i in stride(from: n/2 - 1, through: 0, by: -1) {
+        heapify(&amp;arr, n, i)
+    }
+    for i in stride(from: n-1, to: 0, by: -1) {
+        arr.swapAt(0, i)
+        heapify(&amp;arr, i, 0)
+    }
+}`
+                },
+                counting: {
+                    c: `void countingSort(int arr[], int n) {
+    int max = arr[0];
+    for (int i = 1; i &lt; n; i++)
+        if (arr[i] &gt; max) max = arr[i];
+    int count[max + 1], output[n];
+    memset(count, 0, sizeof(count));
+    for (int i = 0; i &lt; n; i++) count[arr[i]]++;
+    for (int i = 1; i &lt;= max; i++) count[i] += count[i-1];
+    for (int i = n-1; i &gt;= 0; i--) {
+        output[count[arr[i]]-1] = arr[i];
+        count[arr[i]]--;
+    }
+    for (int i = 0; i &lt; n; i++) arr[i] = output[i];
+}`,
+                    cpp: `void countingSort(vector&lt;int&gt;&amp; arr) {
+    int max = *max_element(arr.begin(), arr.end());
+    vector&lt;int&gt; count(max + 1, 0), output(arr.size());
+    for (int num : arr) count[num]++;
+    for (int i = 1; i &lt;= max; i++) count[i] += count[i-1];
+    for (int i = arr.size()-1; i &gt;= 0; i--) {
+        output[count[arr[i]]-1] = arr[i];
+        count[arr[i]]--;
+    }
+    arr = output;
+}`,
+                    python: `def counting_sort(arr):
+    max_val = max(arr)
+    count = [0] * (max_val + 1)
+    output = [0] * len(arr)
+    for num in arr:
+        count[num] += 1
+    for i in range(1, len(count)):
+        count[i] += count[i-1]
+    for i in range(len(arr)-1, -1, -1):
+        output[count[arr[i]]-1] = arr[i]
+        count[arr[i]] -= 1
+    return output`,
+                    go: `func countingSort(arr []int) []int {
+    max := arr[0]
+    for _, v := range arr {
+        if v &gt; max {
+            max = v
+        }
+    }
+    count := make([]int, max+1)
+    output := make([]int, len(arr))
+    for _, v := range arr {
+        count[v]++
+    }
+    for i := 1; i &lt;= max; i++ {
+        count[i] += count[i-1]
+    }
+    for i := len(arr) - 1; i &gt;= 0; i-- {
+        output[count[arr[i]]-1] = arr[i]
+        count[arr[i]]--
+    }
+    return output
+}`,
+                    java: `public class CountingSort {
+    void countingSort(int arr[]) {
+        int n = arr.length;
+        int max = arr[0];
+        for (int i = 1; i &lt; n; i++)
+            if (arr[i] &gt; max) max = arr[i];
+        int count[] = new int[max + 1];
+        int output[] = new int[n];
+        for (int i = 0; i &lt; n; i++) count[arr[i]]++;
+        for (int i = 1; i &lt;= max; i++) count[i] += count[i-1];
+        for (int i = n-1; i &gt;= 0; i--) {
+            output[count[arr[i]]-1] = arr[i];
+            count[arr[i]]--;
+        }
+        for (int i = 0; i &lt; n; i++) arr[i] = output[i];
+    }
+}`,
+                    swift: `func countingSort(_ arr: [Int]) -&gt; [Int] {
+    guard let max = arr.max() else { return arr }
+    var count = Array(repeating: 0, count: max + 1)
+    var output = Array(repeating: 0, count: arr.count)
+    for num in arr {
+        count[num] += 1
+    }
+    for i in 1...max {
+        count[i] += count[i-1]
+    }
+    for i in stride(from: arr.count-1, through: 0, by: -1) {
+        output[count[arr[i]]-1] = arr[i]
+        count[arr[i]] -= 1
+    }
+    return output
+}`
+                },
+                bucket: {
+                    c: `void bucketSort(int arr[], int n) {
+    int max = arr[0], min = arr[0];
+    for (int i = 1; i &lt; n; i++) {
+        if (arr[i] &gt; max) max = arr[i];
+        if (arr[i] &lt; min) min = arr[i];
+    }
+    int bucketCount = 10;
+    int bucketRange = (max - min) / bucketCount + 1;
+    // Implementation simplified for brevity
+    // Create buckets, distribute elements, sort each bucket
+    // and concatenate results
+}`,
+                    cpp: `void bucketSort(vector&lt;int&gt;&amp; arr) {
+    int n = arr.size();
+    if (n &lt;= 0) return;
+    int max = *max_element(arr.begin(), arr.end());
+    int min = *min_element(arr.begin(), arr.end());
+    int bucketCount = 10;
+    int bucketRange = (max - min) / bucketCount + 1;
+    vector&lt;vector&lt;int&gt;&gt; buckets(bucketCount);
+    for (int num : arr) {
+        int idx = (num - min) / bucketRange;
+        buckets[idx].push_back(num);
+    }
+    arr.clear();
+    for (auto&amp; bucket : buckets) {
+        sort(bucket.begin(), bucket.end());
+        arr.insert(arr.end(), bucket.begin(), bucket.end());
+    }
+}`,
+                    python: `def bucket_sort(arr):
+    if not arr:
+        return arr
+    bucket_count = 10
+    max_val, min_val = max(arr), min(arr)
+    bucket_range = (max_val - min_val) / bucket_count + 1
+    buckets = [[] for _ in range(bucket_count)]
+    for num in arr:
+        idx = int((num - min_val) / bucket_range)
+        buckets[idx].append(num)
+    result = []
+    for bucket in buckets:
+        result.extend(sorted(bucket))
+    return result`,
+                    go: `func bucketSort(arr []int) []int {
+    if len(arr) == 0 {
+        return arr
+    }
+    max, min := arr[0], arr[0]
+    for _, v := range arr {
+        if v &gt; max { max = v }
+        if v &lt; min { min = v }
+    }
+    bucketCount := 10
+    bucketRange := (max-min)/bucketCount + 1
+    buckets := make([][]int, bucketCount)
+    for _, v := range arr {
+        idx := (v - min) / bucketRange
+        buckets[idx] = append(buckets[idx], v)
+    }
+    result := []int{}
+    for i := range buckets {
+        sort.Ints(buckets[i])
+        result = append(result, buckets[i]...)
+    }
+    return result
+}`,
+                    java: `public class BucketSort {
+    void bucketSort(int arr[]) {
+        int n = arr.length;
+        if (n &lt;= 0) return;
+        int max = arr[0], min = arr[0];
+        for (int i = 1; i &lt; n; i++) {
+            if (arr[i] &gt; max) max = arr[i];
+            if (arr[i] &lt; min) min = arr[i];
+        }
+        int bucketCount = 10;
+        int bucketRange = (max - min) / bucketCount + 1;
+        ArrayList&lt;Integer&gt;[] buckets = new ArrayList[bucketCount];
+        for (int i = 0; i &lt; bucketCount; i++)
+            buckets[i] = new ArrayList&lt;&gt;();
+        for (int num : arr) {
+            int idx = (num - min) / bucketRange;
+            buckets[idx].add(num);
+        }
+        int index = 0;
+        for (ArrayList&lt;Integer&gt; bucket : buckets) {
+            Collections.sort(bucket);
+            for (int num : bucket)
+                arr[index++] = num;
+        }
+    }
+}`,
+                    swift: `func bucketSort(_ arr: [Int]) -&gt; [Int] {
+    guard !arr.isEmpty else { return arr }
+    guard let max = arr.max(), let min = arr.min() else { return arr }
+    let bucketCount = 10
+    let bucketRange = (max - min) / bucketCount + 1
+    var buckets = Array(repeating: [Int](), count: bucketCount)
+    for num in arr {
+        let idx = (num - min) / bucketRange
+        buckets[idx].append(num)
+    }
+    var result = [Int]()
+    for var bucket in buckets {
+        bucket.sort()
+        result.append(contentsOf: bucket)
+    }
+    return result
+}`
+                },
+                radix: {
+                    c: `void countingSortByDigit(int arr[], int n, int exp) {
+    int output[n], count[10] = {0};
+    for (int i = 0; i &lt; n; i++)
+        count[(arr[i]/exp)%10]++;
+    for (int i = 1; i &lt; 10; i++)
+        count[i] += count[i-1];
+    for (int i = n-1; i &gt;= 0; i--) {
+        output[count[(arr[i]/exp)%10]-1] = arr[i];
+        count[(arr[i]/exp)%10]--;
+    }
+    for (int i = 0; i &lt; n; i++) arr[i] = output[i];
+}
+
+void radixSort(int arr[], int n) {
+    int max = arr[0];
+    for (int i = 1; i &lt; n; i++)
+        if (arr[i] &gt; max) max = arr[i];
+    for (int exp = 1; max/exp &gt; 0; exp *= 10)
+        countingSortByDigit(arr, n, exp);
+}`,
+                    cpp: `void countingSortByDigit(vector&lt;int&gt;&amp; arr, int exp) {
+    int n = arr.size();
+    vector&lt;int&gt; output(n), count(10, 0);
+    for (int i = 0; i &lt; n; i++)
+        count[(arr[i]/exp)%10]++;
+    for (int i = 1; i &lt; 10; i++)
+        count[i] += count[i-1];
+    for (int i = n-1; i &gt;= 0; i--) {
+        output[count[(arr[i]/exp)%10]-1] = arr[i];
+        count[(arr[i]/exp)%10]--;
+    }
+    arr = output;
+}
+
+void radixSort(vector&lt;int&gt;&amp; arr) {
+    int max = *max_element(arr.begin(), arr.end());
+    for (int exp = 1; max/exp &gt; 0; exp *= 10)
+        countingSortByDigit(arr, exp);
+}`,
+                    python: `def counting_sort_by_digit(arr, exp):
+    n = len(arr)
+    output = [0] * n
+    count = [0] * 10
+    for i in range(n):
+        index = arr[i] // exp
+        count[index % 10] += 1
+    for i in range(1, 10):
+        count[i] += count[i-1]
+    for i in range(n-1, -1, -1):
+        index = arr[i] // exp
+        output[count[index % 10]-1] = arr[i]
+        count[index % 10] -= 1
+    return output
+
+def radix_sort(arr):
+    max_val = max(arr)
+    exp = 1
+    while max_val // exp &gt; 0:
+        arr = counting_sort_by_digit(arr, exp)
+        exp *= 10
+    return arr`,
+                    go: `func countingSortByDigit(arr []int, exp int) []int {
+    n := len(arr)
+    output := make([]int, n)
+    count := make([]int, 10)
+    for i := 0; i &lt; n; i++ {
+        count[(arr[i]/exp)%10]++
+    }
+    for i := 1; i &lt; 10; i++ {
+        count[i] += count[i-1]
+    }
+    for i := n - 1; i &gt;= 0; i-- {
+        output[count[(arr[i]/exp)%10]-1] = arr[i]
+        count[(arr[i]/exp)%10]--
+    }
+    return output
+}
+
+func radixSort(arr []int) []int {
+    max := arr[0]
+    for _, v := range arr {
+        if v &gt; max { max = v }
+    }
+    for exp := 1; max/exp &gt; 0; exp *= 10 {
+        arr = countingSortByDigit(arr, exp)
+    }
+    return arr
+}`,
+                    java: `public class RadixSort {
+    void countingSortByDigit(int arr[], int n, int exp) {
+        int output[] = new int[n];
+        int count[] = new int[10];
+        for (int i = 0; i &lt; n; i++)
+            count[(arr[i]/exp)%10]++;
+        for (int i = 1; i &lt; 10; i++)
+            count[i] += count[i-1];
+        for (int i = n-1; i &gt;= 0; i--) {
+            output[count[(arr[i]/exp)%10]-1] = arr[i];
+            count[(arr[i]/exp)%10]--;
+        }
+        for (int i = 0; i &lt; n; i++) arr[i] = output[i];
+    }
+    
+    void radixSort(int arr[]) {
+        int n = arr.length;
+        int max = arr[0];
+        for (int i = 1; i &lt; n; i++)
+            if (arr[i] &gt; max) max = arr[i];
+        for (int exp = 1; max/exp &gt; 0; exp *= 10)
+            countingSortByDigit(arr, n, exp);
+    }
+}`,
+                    swift: `func countingSortByDigit(_ arr: [Int], _ exp: Int) -&gt; [Int] {
+    var output = Array(repeating: 0, count: arr.count)
+    var count = Array(repeating: 0, count: 10)
+    for num in arr {
+        count[(num/exp)%10] += 1
+    }
+    for i in 1..&lt;10 {
+        count[i] += count[i-1]
+    }
+    for i in stride(from: arr.count-1, through: 0, by: -1) {
+        output[count[(arr[i]/exp)%10]-1] = arr[i]
+        count[(arr[i]/exp)%10] -= 1
+    }
+    return output
+}
+
+func radixSort(_ arr: [Int]) -&gt; [Int] {
+    guard let max = arr.max() else { return arr }
+    var result = arr
+    var exp = 1
+    while max / exp &gt; 0 {
+        result = countingSortByDigit(result, exp)
+        exp *= 10
+    }
+    return result
+}`
+                }
+            };
+        }
+        
+        // 获取C++代码模板用于实时显示
+        function getCppCodeTemplate() {
+            const templates = {
+                bubble: [
+                    'void bubbleSort(vector<int>& arr) {',
+                    '    int n = arr.size();',
+                    '    for (int i = 0; i < n-1; i++) {',
+                    '        for (int j = 0; j < n-i-1; j++) {',
+                    '            if (arr[j] > arr[j+1]) {', // compare
+                    '                swap(arr[j], arr[j+1]);', // swap
+                    '            }',
+                    '        }',
+                    '    }',
+                    '}'
+                ],
+                selection: [
+                    'void selectionSort(vector<int>& arr) {',
+                    '    int n = arr.size();',
+                    '    for (int i = 0; i < n-1; i++) {',
+                    '        int minIdx = i;',
+                    '        for (int j = i+1; j < n; j++) {',
+                    '            if (arr[j] < arr[minIdx])', // compare
+                    '                minIdx = j;',
+                    '        }',
+                    '        swap(arr[minIdx], arr[i]);', // swap
+                    '    }',
+                    '}'
+                ],
+                insertion: [
+                    'void insertionSort(vector<int>& arr) {',
+                    '    int n = arr.size();',
+                    '    for (int i = 1; i < n; i++) {',
+                    '        int key = arr[i];',
+                    '        int j = i - 1;',
+                    '        while (j >= 0 && arr[j] > key) {', // compare
+                    '            arr[j + 1] = arr[j];', // swap
+                    '            j--;',
+                    '        }',
+                    '        arr[j + 1] = key;',
+                    '    }',
+                    '}'
+                ],
+                shell: [
+                    'void shellSort(vector<int>& arr) {',
+                    '    int n = arr.size();',
+                    '    for (int gap = n/2; gap > 0; gap /= 2) {',
+                    '        for (int i = gap; i < n; i++) {',
+                    '            int temp = arr[i];',
+                    '            int j;',
+                    '            for (j = i; j >= gap && arr[j-gap] > temp; j -= gap)', // compare
+                    '                arr[j] = arr[j - gap];', // swap
+                    '            arr[j] = temp;',
+                    '        }',
+                    '    }',
+                    '}'
+                ],
+                merge: [
+                    'void merge(vector<int>& arr, int l, int m, int r) {',
+                    '    vector<int> L(arr.begin() + l, arr.begin() + m + 1);',
+                    '    vector<int> R(arr.begin() + m + 1, arr.begin() + r + 1);',
+                    '    int i = 0, j = 0, k = l;',
+                    '    while (i < L.size() && j < R.size())', // compare
+                    '        arr[k++] = (L[i] <= R[j]) ? L[i++] : R[j++];', // swap
+                    '    while (i < L.size()) arr[k++] = L[i++];',
+                    '    while (j < R.size()) arr[k++] = R[j++];',
+                    '}',
+                    'void mergeSort(vector<int>& arr, int l, int r) {',
+                    '    if (l < r) {',
+                    '        int m = l + (r - l) / 2;',
+                    '        mergeSort(arr, l, m);',
+                    '        mergeSort(arr, m + 1, r);',
+                    '        merge(arr, l, m, r);',
+                    '    }',
+                    '}'
+                ],
+                quick: [
+                    'int partition(vector<int>& arr, int low, int high) {',
+                    '    int pivot = arr[high];',
+                    '    int i = low - 1;',
+                    '    for (int j = low; j < high; j++) {',
+                    '        if (arr[j] < pivot) {', // compare
+                    '            i++;',
+                    '            swap(arr[i], arr[j]);', // swap
+                    '        }',
+                    '    }',
+                    '    swap(arr[i + 1], arr[high]);',
+                    '    return i + 1;',
+                    '}',
+                    'void quickSort(vector<int>& arr, int low, int high) {',
+                    '    if (low < high) {',
+                    '        int pi = partition(arr, low, high);',
+                    '        quickSort(arr, low, pi - 1);',
+                    '        quickSort(arr, pi + 1, high);',
+                    '    }',
+                    '}'
+                ],
+                heap: [
+                    'void heapify(vector<int>& arr, int n, int i) {',
+                    '    int largest = i, l = 2*i + 1, r = 2*i + 2;',
+                    '    if (l < n && arr[l] > arr[largest]) largest = l;', // compare
+                    '    if (r < n && arr[r] > arr[largest]) largest = r;',
+                    '    if (largest != i) {',
+                    '        swap(arr[i], arr[largest]);', // swap
+                    '        heapify(arr, n, largest);',
+                    '    }',
+                    '}',
+                    'void heapSort(vector<int>& arr) {',
+                    '    int n = arr.size();',
+                    '    for (int i = n/2 - 1; i >= 0; i--)',
+                    '        heapify(arr, n, i);',
+                    '    for (int i = n-1; i > 0; i--) {',
+                    '        swap(arr[0], arr[i]);',
+                    '        heapify(arr, i, 0);',
+                    '    }',
+                    '}'
+                ],
+                counting: [
+                    'void countingSort(vector<int>& arr) {',
+                    '    int max = *max_element(arr.begin(), arr.end());',
+                    '    vector<int> count(max + 1, 0), output(arr.size());',
+                    '    for (int num : arr) count[num]++;',
+                    '    for (int i = 1; i <= max; i++) count[i] += count[i-1];',
+                    '    for (int i = arr.size()-1; i >= 0; i--) {',
+                    '        output[count[arr[i]]-1] = arr[i];', // swap
+                    '        count[arr[i]]--;',
+                    '    }',
+                    '    arr = output;',
+                    '}'
+                ],
+                bucket: [
+                    'void bucketSort(vector<int>& arr) {',
+                    '    int n = arr.size();',
+                    '    if (n <= 0) return;',
+                    '    int max = *max_element(arr.begin(), arr.end());',
+                    '    int min = *min_element(arr.begin(), arr.end());',
+                    '    int bucketCount = 10;',
+                    '    int bucketRange = (max - min) / bucketCount + 1;',
+                    '    vector<vector<int>> buckets(bucketCount);',
+                    '    for (int num : arr) {',
+                    '        int idx = (num - min) / bucketRange;',
+                    '        buckets[idx].push_back(num);',
+                    '    }',
+                    '    arr.clear();',
+                    '    for (auto& bucket : buckets) {',
+                    '        sort(bucket.begin(), bucket.end());', // sort
+                    '        arr.insert(arr.end(), bucket.begin(), bucket.end());',
+                    '    }',
+                    '}'
+                ],
+                radix: [
+                    'void countingSortByDigit(vector<int>& arr, int exp) {',
+                    '    int n = arr.size();',
+                    '    vector<int> output(n), count(10, 0);',
+                    '    for (int i = 0; i < n; i++)',
+                    '        count[(arr[i]/exp)%10]++;',
+                    '    for (int i = 1; i < 10; i++)',
+                    '        count[i] += count[i-1];',
+                    '    for (int i = n-1; i >= 0; i--) {',
+                    '        output[count[(arr[i]/exp)%10]-1] = arr[i];', // swap
+                    '        count[(arr[i]/exp)%10]--;',
+                    '    }',
+                    '    arr = output;',
+                    '}',
+                    'void radixSort(vector<int>& arr) {',
+                    '    int max = *max_element(arr.begin(), arr.end());',
+                    '    for (int exp = 1; max/exp > 0; exp *= 10)',
+                    '        countingSortByDigit(arr, exp);',
+                    '}'
+                ]
+            };
+            return templates[currentAlgorithm] || templates.bubble;
+        }
+        
+        // 更新实时代码显示
+        function updateLiveCodeDisplay(highlightLine = null, state = 'normal') {
+            const codeLines = getCppCodeTemplate();
+            const liveCodeDisplay = document.getElementById('live-code-display');
+            
+            if (!liveCodeDisplay) return;
+            
+            let html = '';
+            codeLines.forEach((line, index) => {
+                let lineClass = 'code-line';
+                let lineStyle = 'color: #d1d5db;'; // gray-300
+                
+                if (highlightLine !== null && index === highlightLine) {
+                    if (state === 'comparing') {
+                        lineClass += ' code-line-comparing';
+                        lineStyle = 'color: #fbbf24;'; // yellow for comparing
+                    } else if (state === 'swapping') {
+                        lineClass += ' code-line-swapping';
+                        lineStyle = 'color: #fca5a5;'; // red for swapping
+                    } else {
+                        lineClass += ' code-line-current';
+                        lineStyle = 'color: #93c5fd;'; // blue for current
+                    }
+                }
+                
+                html += `<span class="${lineClass}" style="${lineStyle}">${escapeHtml(line)}\n</span>`;
+            });
+            
+            liveCodeDisplay.innerHTML = html;
+        }
+        
+        // HTML转义
+        function escapeHtml(text) {
+            const map = {
+                '&': '&amp;',
+                '<': '&lt;',
+                '>': '&gt;',
+                '"': '&quot;',
+                "'": '&#039;'
+            };
+            return text.replace(/[&<>"']/g, m => map[m]);
+        }
+        
+        // 初始化实时代码显示
+        
         // 创建新数组
         function createNewArray() {
             resetSort();
@@ -548,6 +1880,7 @@
                 // 生成1到100的随机数
                 array.push(Math.floor(Math.random() * 100) + 1);
             }
+            originalArray = [...array]; // 保存原始数组
             renderArray();
             currentArraySizeEl.textContent = arraySize;
         }
@@ -617,6 +1950,7 @@
             if (isSorting && isPaused) {
                 // 继续排序
                 isPaused = false;
+                pauseSortBtn.innerHTML = '<i class="fa fa-pause"></i> 暂停';
                 continueSorting();
             } else if (!isSorting) {
                 // 开始新的排序
@@ -630,10 +1964,11 @@
                 startSortBtn.disabled = true;
                 newArrayBtn.disabled = true;
                 arraySizeSlider.disabled = true;
+                algorithmSelect.disabled = true;
                 pauseSortBtn.disabled = false;
                 
-                // 开始冒泡排序
-                bubbleSort(0, 0);
+                // 根据选择的算法开始排序
+                executeSortAlgorithm();
             }
         }
         
@@ -659,11 +1994,8 @@
         
         // 继续排序
         function continueSorting() {
-            if (isSorting && !isPaused) {
-                // 从当前状态继续排序
-                const i = window.currentI || 0;
-                const j = window.currentJ || 0;
-                bubbleSort(i, j);
+            if (isSorting && !isPaused && sortingGenerator) {
+                runSortingStep();
             }
         }
         
@@ -678,6 +2010,13 @@
                 }
             }
             
+            sortingGenerator = null;
+            
+            // 恢复原始数组
+            if (originalArray.length > 0) {
+                array = [...originalArray];
+            }
+            
             // 重置计数器
             comparisonCount = 0;
             swapCount = 0;
@@ -687,72 +2026,700 @@
             startSortBtn.disabled = false;
             newArrayBtn.disabled = false;
             arraySizeSlider.disabled = false;
+            algorithmSelect.disabled = false;
             pauseSortBtn.disabled = true;
             pauseSortBtn.innerHTML = '<i class="fa fa-pause"></i> 暂停';
             
             // 重新渲染数组
             renderArray();
+            
+            // 重置实时代码显示
+            updateLiveCodeDisplay();
         }
         
-        // 冒泡排序算法实现（带可视化）
-        async function bubbleSort(i, j) {
-            // 保存当前索引，用于暂停后继续
-            window.currentI = i;
-            window.currentJ = j;
+        // 执行排序算法
+        function executeSortAlgorithm() {
+            switch(currentAlgorithm) {
+                case 'bubble':
+                    sortingGenerator = bubbleSortGenerator();
+                    break;
+                case 'selection':
+                    sortingGenerator = selectionSortGenerator();
+                    break;
+                case 'insertion':
+                    sortingGenerator = insertionSortGenerator();
+                    break;
+                case 'shell':
+                    sortingGenerator = shellSortGenerator();
+                    break;
+                case 'merge':
+                    sortingGenerator = mergeSortGenerator();
+                    break;
+                case 'quick':
+                    sortingGenerator = quickSortGenerator();
+                    break;
+                case 'heap':
+                    sortingGenerator = heapSortGenerator();
+                    break;
+                case 'counting':
+                    sortingGenerator = countingSortGenerator();
+                    break;
+                case 'bucket':
+                    sortingGenerator = bucketSortGenerator();
+                    break;
+                case 'radix':
+                    sortingGenerator = radixSortGenerator();
+                    break;
+                default:
+                    sortingGenerator = bubbleSortGenerator();
+            }
+            runSortingStep();
+        }
+        
+        // 运行排序步骤
+        function runSortingStep() {
+            if (!sortingGenerator || isPaused) return;
             
-            // 如果排序已完成
-            if (i >= array.length - 1) {
-                // 所有元素都已排序
-                renderArray([], Array.from({length: array.length}, (_, k) => k));
+            const result = sortingGenerator.next();
+            
+            if (result.done) {
+                // 排序完成
                 isSorting = false;
-                
-                // 重置按钮状态
                 startSortBtn.disabled = false;
                 newArrayBtn.disabled = false;
                 arraySizeSlider.disabled = false;
+                algorithmSelect.disabled = false;
                 pauseSortBtn.disabled = true;
                 
-                return;
+                // 所有元素都已排序
+                renderArray([], Array.from({length: array.length}, (_, k) => k));
+            } else {
+                // 继续下一步
+                animationId = setTimeout(runSortingStep, sortSpeed);
             }
+        }
+        
+        // =========================
+        // 冒泡排序
+        // =========================
+        function* bubbleSortGenerator() {
+            const n = array.length;
+            updateLiveCodeDisplay(0); // function declaration
+            yield;
             
-            // 如果内循环已完成
-            if (j >= array.length - i - 1) {
-                // 标记当前i位置的元素为已排序
-                const sortedIndices = Array.from({length: i + 1}, (_, k) => array.length - 1 - k);
-                renderArray([], sortedIndices);
+            for (let i = 0; i < n - 1; i++) {
+                updateLiveCodeDisplay(2); // outer loop
+                yield;
                 
-                // 进入下一轮外循环
-                animationId = setTimeout(() => bubbleSort(i + 1, 0), sortSpeed);
-                return;
+                for (let j = 0; j < n - i - 1; j++) {
+                    updateLiveCodeDisplay(3); // inner loop
+                    yield;
+                    
+                    comparisonCount++;
+                    updateCounters();
+                    
+                    // 高亮显示正在比较的元素
+                    const sortedIndices = Array.from({length: i}, (_, k) => n - 1 - k);
+                    renderArray([j, j + 1], sortedIndices);
+                    updateLiveCodeDisplay(4, 'comparing'); // if condition
+                    yield;
+                    
+                    if (array[j] > array[j + 1]) {
+                        [array[j], array[j + 1]] = [array[j + 1], array[j]];
+                        swapCount++;
+                        updateCounters();
+                        
+                        renderArray([j, j + 1], sortedIndices);
+                        updateLiveCodeDisplay(5, 'swapping'); // swap operation
+                        yield;
+                    }
+                }
             }
+        }
+        
+        // =========================
+        // 选择排序
+        // =========================
+        function* selectionSortGenerator() {
+            const n = array.length;
+            updateLiveCodeDisplay(0); // function declaration
+            yield;
             
-            // 比较相邻元素
-            comparisonCount++;
-            updateCounters();
-            
-            // 高亮显示正在比较的元素
-            renderArray([j, j + 1], Array.from({length: i}, (_, k) => array.length - 1 - k));
-            
-            animationId = setTimeout(() => {
-                if (isPaused) return;
+            for (let i = 0; i < n - 1; i++) {
+                updateLiveCodeDisplay(2); // outer loop
+                yield;
                 
-                // 如果需要交换
-                if (array[j] > array[j + 1]) {
-                    // 交换元素
-                    [array[j], array[j + 1]] = [array[j + 1], array[j]];
+                let minIdx = i;
+                updateLiveCodeDisplay(3); // minIdx initialization
+                yield;
+                
+                for (let j = i + 1; j < n; j++) {
+                    updateLiveCodeDisplay(4); // inner loop
+                    yield;
+                    
+                    comparisonCount++;
+                    updateCounters();
+                    
+                    const sortedIndices = Array.from({length: i}, (_, k) => k);
+                    renderArray([minIdx, j], sortedIndices);
+                    updateLiveCodeDisplay(5, 'comparing'); // if condition
+                    yield;
+                    
+                    if (array[j] < array[minIdx]) {
+                        minIdx = j;
+                        updateLiveCodeDisplay(6); // update minIdx
+                        yield;
+                    }
+                }
+                
+                if (minIdx !== i) {
+                    [array[i], array[minIdx]] = [array[minIdx], array[i]];
                     swapCount++;
                     updateCounters();
                     
-                    // 重新渲染以显示交换后的状态
-                    renderArray([j, j + 1], Array.from({length: i}, (_, k) => array.length - 1 - k));
-                    
-                    // 继续下一次比较
-                    animationId = setTimeout(() => bubbleSort(i, j + 1), sortSpeed);
-                } else {
-                    // 不需要交换，继续下一次比较
-                    bubbleSort(i, j + 1);
+                    const sortedIndices = Array.from({length: i + 1}, (_, k) => k);
+                    renderArray([i, minIdx], sortedIndices);
+                    updateLiveCodeDisplay(8, 'swapping'); // swap operation
+                    yield;
                 }
-            }, sortSpeed);
+            }
+        }
+        
+        // =========================
+        // 插入排序
+        // =========================
+        function* insertionSortGenerator() {
+            const n = array.length;
+            updateLiveCodeDisplay(0); // function declaration
+            yield;
+            
+            for (let i = 1; i < n; i++) {
+                updateLiveCodeDisplay(2); // outer loop
+                yield;
+                
+                let key = array[i];
+                updateLiveCodeDisplay(3); // key assignment
+                yield;
+                
+                let j = i - 1;
+                updateLiveCodeDisplay(4); // j initialization
+                
+                renderArray([i], Array.from({length: i}, (_, k) => k));
+                yield;
+                
+                while (j >= 0 && array[j] > key) {
+                    comparisonCount++;
+                    updateCounters();
+                    
+                    updateLiveCodeDisplay(5, 'comparing'); // while condition
+                    yield;
+                    
+                    array[j + 1] = array[j];
+                    swapCount++;
+                    updateCounters();
+                    
+                    renderArray([j, j + 1], Array.from({length: i}, (_, k) => k));
+                    updateLiveCodeDisplay(6, 'swapping'); // shift operation
+                    yield;
+                    
+                    j--;
+                    updateLiveCodeDisplay(7); // decrement j
+                    yield;
+                }
+                
+                if (j >= 0) {
+                    comparisonCount++;
+                    updateCounters();
+                }
+                
+                array[j + 1] = key;
+                updateLiveCodeDisplay(9); // place key
+                
+                renderArray([j + 1], Array.from({length: i + 1}, (_, k) => k));
+                yield;
+            }
+        }
+        
+        // =========================
+        // 希尔排序
+        // =========================
+        function* shellSortGenerator() {
+            const n = array.length;
+            updateLiveCodeDisplay(0); // function declaration
+            yield;
+            
+            let gap = Math.floor(n / 2);
+            updateLiveCodeDisplay(2); // gap initialization
+            yield;
+            
+            while (gap > 0) {
+                updateLiveCodeDisplay(3); // while loop
+                yield;
+                
+                for (let i = gap; i < n; i++) {
+                    updateLiveCodeDisplay(4); // for loop
+                    yield;
+                    
+                    let temp = array[i];
+                    updateLiveCodeDisplay(5); // temp assignment
+                    let j = i;
+                    
+                    renderArray([i], []);
+                    yield;
+                    
+                    while (j >= gap && array[j - gap] > temp) {
+                        comparisonCount++;
+                        updateCounters();
+                        
+                        updateLiveCodeDisplay(7, 'comparing'); // while condition
+                        yield;
+                        
+                        array[j] = array[j - gap];
+                        swapCount++;
+                        updateCounters();
+                        
+                        renderArray([j, j - gap], []);
+                        updateLiveCodeDisplay(8, 'swapping'); // shift operation
+                        yield;
+                        
+                        j -= gap;
+                    }
+                    
+                    if (j >= gap) {
+                        comparisonCount++;
+                        updateCounters();
+                    }
+                    
+                    array[j] = temp;
+                    updateLiveCodeDisplay(9); // place temp
+                    
+                    renderArray([j], []);
+                    yield;
+                }
+                gap = Math.floor(gap / 2);
+            }
+        }
+        
+        // =========================
+        // 归并排序
+        // =========================
+        function* mergeSortGenerator() {
+            updateLiveCodeDisplay(9); // mergeSort function
+            yield;
+            yield* mergeSortHelper(0, array.length - 1);
+        }
+        
+        function* mergeSortHelper(left, right) {
+            if (left >= right) return;
+            
+            updateLiveCodeDisplay(10); // if condition
+            yield;
+            
+            const mid = Math.floor((left + right) / 2);
+            updateLiveCodeDisplay(11); // mid calculation
+            yield;
+            
+            yield* mergeSortHelper(left, mid);
+            yield* mergeSortHelper(mid + 1, right);
+            yield* merge(left, mid, right);
+        }
+        
+        function* merge(left, mid, right) {
+            updateLiveCodeDisplay(0); // merge function
+            yield;
+            
+            const leftArr = array.slice(left, mid + 1);
+            const rightArr = array.slice(mid + 1, right + 1);
+            updateLiveCodeDisplay(1); // array slicing
+            yield;
+            
+            let i = 0, j = 0, k = left;
+            updateLiveCodeDisplay(3); // initialize indices
+            yield;
+            
+            while (i < leftArr.length && j < rightArr.length) {
+                comparisonCount++;
+                updateCounters();
+                
+                renderArray([k, left + i, mid + 1 + j], []);
+                updateLiveCodeDisplay(4, 'comparing'); // while condition
+                yield;
+                
+                if (leftArr[i] <= rightArr[j]) {
+                    array[k] = leftArr[i];
+                    i++;
+                } else {
+                    array[k] = rightArr[j];
+                    j++;
+                }
+                swapCount++;
+                updateCounters();
+                updateLiveCodeDisplay(5, 'swapping'); // merge operation
+                yield;
+                k++;
+            }
+            
+            while (i < leftArr.length) {
+                array[k] = leftArr[i];
+                swapCount++;
+                updateCounters();
+                
+                renderArray([k], []);
+                updateLiveCodeDisplay(6, 'swapping'); // copy remaining
+                yield;
+                
+                i++;
+                k++;
+            }
+            
+            while (j < rightArr.length) {
+                array[k] = rightArr[j];
+                swapCount++;
+                updateCounters();
+                
+                renderArray([k], []);
+                updateLiveCodeDisplay(7, 'swapping'); // copy remaining
+                yield;
+                
+                j++;
+                k++;
+            }
+        }
+        
+        // =========================
+        // 快速排序
+        // =========================
+        function* quickSortGenerator() {
+            updateLiveCodeDisplay(12); // quickSort function
+            yield* quickSortHelper(0, array.length - 1);
+        }
+        
+        function* quickSortHelper(low, high) {
+            if (low < high) {
+                updateLiveCodeDisplay(13); // if condition
+                yield;
+                
+                const pi = yield* partition(low, high);
+                updateLiveCodeDisplay(14); // partition call
+                yield;
+                
+                yield* quickSortHelper(low, pi - 1);
+                yield* quickSortHelper(pi + 1, high);
+            }
+        }
+        
+        function* partition(low, high) {
+            updateLiveCodeDisplay(0); // partition function
+            yield;
+            
+            const pivot = array[high];
+            updateLiveCodeDisplay(1); // pivot assignment
+            yield;
+            
+            let i = low - 1;
+            updateLiveCodeDisplay(2); // i initialization
+            yield;
+            
+            for (let j = low; j < high; j++) {
+                updateLiveCodeDisplay(3); // for loop
+                yield;
+                
+                comparisonCount++;
+                updateCounters();
+                
+                renderArray([j, high], []);
+                updateLiveCodeDisplay(4, 'comparing'); // if condition
+                yield;
+                
+                if (array[j] < pivot) {
+                    i++;
+                    [array[i], array[j]] = [array[j], array[i]];
+                    swapCount++;
+                    updateCounters();
+                    
+                    renderArray([i, j], []);
+                    updateLiveCodeDisplay(6, 'swapping'); // swap
+                    yield;
+                }
+            }
+            
+            [array[i + 1], array[high]] = [array[high], array[i + 1]];
+            swapCount++;
+            updateCounters();
+            
+            renderArray([i + 1, high], []);
+            updateLiveCodeDisplay(9, 'swapping'); // final swap
+            yield;
+            
+            return i + 1;
+        }
+        
+        // =========================
+        // 堆排序
+        // =========================
+        function* heapSortGenerator() {
+            const n = array.length;
+            updateLiveCodeDisplay(9); // heapSort function
+            yield;
+            
+            // 构建最大堆
+            for (let i = Math.floor(n / 2) - 1; i >= 0; i--) {
+                updateLiveCodeDisplay(11); // build heap loop
+                yield;
+                yield* heapify(n, i);
+            }
+            
+            // 一个个从堆顶取出元素
+            for (let i = n - 1; i > 0; i--) {
+                updateLiveCodeDisplay(13); // extract max loop
+                yield;
+                
+                [array[0], array[i]] = [array[i], array[0]];
+                swapCount++;
+                updateCounters();
+                
+                renderArray([0, i], Array.from({length: n - i}, (_, k) => n - 1 - k));
+                updateLiveCodeDisplay(14, 'swapping'); // swap with last
+                yield;
+                
+                yield* heapify(i, 0);
+            }
+        }
+        
+        function* heapify(n, i) {
+            updateLiveCodeDisplay(0); // heapify function
+            yield;
+            
+            let largest = i;
+            const left = 2 * i + 1;
+            const right = 2 * i + 2;
+            updateLiveCodeDisplay(1); // initialize indices
+            yield;
+            
+            if (left < n) {
+                comparisonCount++;
+                updateCounters();
+                updateLiveCodeDisplay(2, 'comparing'); // compare with left
+                yield;
+                
+                if (array[left] > array[largest]) {
+                    largest = left;
+                }
+            }
+            
+            if (right < n) {
+                comparisonCount++;
+                updateCounters();
+                updateLiveCodeDisplay(3, 'comparing'); // compare with right
+                yield;
+                
+                if (array[right] > array[largest]) {
+                    largest = right;
+                }
+            }
+            
+            if (largest !== i) {
+                updateLiveCodeDisplay(4); // check if swap needed
+                yield;
+                
+                [array[i], array[largest]] = [array[largest], array[i]];
+                swapCount++;
+                updateCounters();
+                
+                renderArray([i, largest], []);
+                updateLiveCodeDisplay(5, 'swapping'); // swap
+                yield;
+                
+                yield* heapify(n, largest);
+            }
+        }
+        
+        // =========================
+        // 计数排序
+        // =========================
+        function* countingSortGenerator() {
+            updateLiveCodeDisplay(0); // countingSort function
+            yield;
+            
+            const max = Math.max(...array);
+            const min = Math.min(...array);
+            const range = max - min + 1;
+            const count = new Array(range).fill(0);
+            const output = new Array(array.length);
+            updateLiveCodeDisplay(1); // initialization
+            yield;
+            
+            // 统计每个元素出现次数
+            for (let i = 0; i < array.length; i++) {
+                updateLiveCodeDisplay(3); // count loop
+                yield;
+                
+                count[array[i] - min]++;
+                renderArray([i], []);
+                updateLiveCodeDisplay(4); // increment count
+                yield;
+            }
+            
+            // 更改count[i]使其包含实际位置
+            for (let i = 1; i < count.length; i++) {
+                count[i] += count[i - 1];
+            }
+            updateLiveCodeDisplay(5); // cumulative count
+            yield;
+            
+            // 构建输出数组
+            for (let i = array.length - 1; i >= 0; i--) {
+                updateLiveCodeDisplay(6); // build output loop
+                yield;
+                
+                output[count[array[i] - min] - 1] = array[i];
+                count[array[i] - min]--;
+                swapCount++;
+                updateCounters();
+                
+                renderArray([i], []);
+                updateLiveCodeDisplay(7, 'swapping'); // place element
+                yield;
+            }
+            
+            // 复制回原数组
+            for (let i = 0; i < array.length; i++) {
+                array[i] = output[i];
+                renderArray([i], Array.from({length: i + 1}, (_, k) => k));
+                updateLiveCodeDisplay(9, 'swapping'); // copy back
+                yield;
+            }
+        }
+        
+        // =========================
+        // 桶排序
+        // =========================
+        function* bucketSortGenerator() {
+            const n = array.length;
+            if (n <= 0) return;
+            
+            updateLiveCodeDisplay(0); // bucketSort function
+            yield;
+            
+            const bucketCount = Math.max(5, Math.floor(n / 5));
+            const buckets = Array.from({length: bucketCount}, () => []);
+            
+            const max = Math.max(...array);
+            const min = Math.min(...array);
+            const bucketSize = Math.ceil((max - min + 1) / bucketCount);
+            updateLiveCodeDisplay(1); // initialization
+            yield;
+            
+            // 分配元素到桶
+            for (let i = 0; i < n; i++) {
+                updateLiveCodeDisplay(8); // distribute loop
+                yield;
+                
+                const bucketIndex = Math.min(Math.floor((array[i] - min) / bucketSize), bucketCount - 1);
+                buckets[bucketIndex].push(array[i]);
+                
+                renderArray([i], []);
+                updateLiveCodeDisplay(9); // push to bucket
+                yield;
+            }
+            
+            // 对每个桶进行排序并合并
+            let index = 0;
+            for (let i = 0; i < bucketCount; i++) {
+                if (buckets[i].length > 0) {
+                    updateLiveCodeDisplay(13); // merge loop
+                    yield;
+                    
+                    buckets[i].sort((a, b) => a - b);
+                    updateLiveCodeDisplay(14); // sort bucket
+                    yield;
+                    
+                    for (let j = 0; j < buckets[i].length; j++) {
+                        array[index] = buckets[i][j];
+                        swapCount++;
+                        updateCounters();
+                        
+                        renderArray([index], Array.from({length: index + 1}, (_, k) => k));
+                        updateLiveCodeDisplay(15, 'swapping'); // copy back
+                        yield;
+                        
+                        index++;
+                    }
+                }
+            }
+        }
+        
+        // =========================
+        // 基数排序
+        // =========================
+        function* radixSortGenerator() {
+            updateLiveCodeDisplay(13); // radixSort function
+            yield;
+            
+            const max = Math.max(...array);
+            updateLiveCodeDisplay(14); // find max
+            yield;
+            
+            for (let exp = 1; Math.floor(max / exp) > 0; exp *= 10) {
+                updateLiveCodeDisplay(15); // exp loop
+                yield;
+                yield* countingSortByDigit(exp);
+            }
+        }
+        
+        function* countingSortByDigit(exp) {
+            updateLiveCodeDisplay(0); // countingSortByDigit function
+            yield;
+            
+            const n = array.length;
+            const output = new Array(n);
+            const count = new Array(10).fill(0);
+            updateLiveCodeDisplay(1); // initialization
+            yield;
+            
+            // 统计每个数字出现次数
+            for (let i = 0; i < n; i++) {
+                updateLiveCodeDisplay(3); // count digits loop
+                yield;
+                
+                const digit = Math.floor(array[i] / exp) % 10;
+                count[digit]++;
+                
+                renderArray([i], []);
+                updateLiveCodeDisplay(4); // increment count
+                yield;
+            }
+            
+            // 更改count[i]使其包含实际位置
+            for (let i = 1; i < 10; i++) {
+                count[i] += count[i - 1];
+            }
+            updateLiveCodeDisplay(6); // cumulative count
+            yield;
+            
+            // 构建输出数组
+            for (let i = n - 1; i >= 0; i--) {
+                updateLiveCodeDisplay(7); // build output loop
+                yield;
+                
+                const digit = Math.floor(array[i] / exp) % 10;
+                output[count[digit] - 1] = array[i];
+                count[digit]--;
+                swapCount++;
+                updateCounters();
+                
+                renderArray([i], []);
+                updateLiveCodeDisplay(8, 'swapping'); // place element
+                yield;
+            }
+            
+            // 复制回原数组
+            for (let i = 0; i < n; i++) {
+                array[i] = output[i];
+                renderArray([i], []);
+                updateLiveCodeDisplay(11, 'swapping'); // copy back
+                yield;
+            }
         }
         
         // 更新计数器显示

@@ -63,6 +63,23 @@
             .control-btn-secondary {
                 @apply bg-gray-100 text-gray-800 hover:bg-gray-200 active:bg-gray-300;
             }
+            .code-line {
+                display: block;
+                padding: 0.125rem 0.5rem;
+                transition: all 0.2s ease;
+            }
+            .code-line-current {
+                background-color: rgba(59, 130, 246, 0.2);
+                border-left: 3px solid #3b82f6;
+            }
+            .code-line-comparing {
+                background-color: rgba(249, 115, 22, 0.2);
+                border-left: 3px solid #f97316;
+            }
+            .code-line-swapping {
+                background-color: rgba(239, 68, 68, 0.2);
+                border-left: 3px solid #ef4444;
+            }
         }
     </style>
 </head>
@@ -214,6 +231,30 @@
                             <div class="flex items-center gap-2">
                                 <div class="w-4 h-4 bg-sorted rounded-sm"></div>
                                 <span>已排序</span>
+                            </div>
+                        </div>
+                        
+                        <!-- 实时代码执行显示 -->
+                        <div class="mt-6 border-t border-gray-200 pt-4">
+                            <div class="flex items-center justify-between mb-3">
+                                <h3 class="text-base font-semibold">实时代码执行 (C++)</h3>
+                                <div class="flex items-center gap-3 text-xs">
+                                    <div class="flex items-center gap-1.5">
+                                        <div class="w-2.5 h-2.5 bg-blue-500 rounded"></div>
+                                        <span>当前行</span>
+                                    </div>
+                                    <div class="flex items-center gap-1.5">
+                                        <div class="w-2.5 h-2.5 bg-comparing rounded"></div>
+                                        <span>比较操作</span>
+                                    </div>
+                                    <div class="flex items-center gap-1.5">
+                                        <div class="w-2.5 h-2.5 bg-swapping rounded"></div>
+                                        <span>交换操作</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="bg-gray-900 rounded-lg p-3 overflow-x-auto">
+                                <pre class="font-code text-xs" id="live-code-display"><code class="text-gray-300">选择一个算法并开始排序以查看实时代码执行...</code></pre>
                             </div>
                         </div>
                     </div>
@@ -391,6 +432,8 @@
         let currentAlgorithm = 'bubble';
         let sortingGenerator = null; // 用于存储排序生成器
         let currentCodeLang = 'c'; // 当前选中的代码语言
+        let currentExecutingLine = null; // 当前执行的代码行
+        let currentCodeState = 'normal'; // normal, comparing, swapping
         
         // DOM 元素
         const visualizationContainer = document.getElementById('visualization-container');
@@ -420,6 +463,7 @@
             createNewArray();
             setupEventListeners();
             renderCodeBlocks(); // 初始化代码块
+            updateLiveCodeDisplay(); // 初始化实时代码显示
         });
         
         // 设置事件监听器
@@ -430,6 +474,7 @@
                     currentAlgorithm = e.target.value;
                     updateAlgorithmNames();
                     renderCodeBlocks(); // 更新代码显示
+                    updateLiveCodeDisplay(); // 更新实时代码显示
                     resetSort();
                 }
             });
@@ -1609,6 +1654,224 @@ func radixSort(_ arr: [Int]) -&gt; [Int] {
             };
         }
         
+        // 获取C++代码模板用于实时显示
+        function getCppCodeTemplate() {
+            const templates = {
+                bubble: [
+                    'void bubbleSort(vector<int>& arr) {',
+                    '    int n = arr.size();',
+                    '    for (int i = 0; i < n-1; i++) {',
+                    '        for (int j = 0; j < n-i-1; j++) {',
+                    '            if (arr[j] > arr[j+1]) {', // compare
+                    '                swap(arr[j], arr[j+1]);', // swap
+                    '            }',
+                    '        }',
+                    '    }',
+                    '}'
+                ],
+                selection: [
+                    'void selectionSort(vector<int>& arr) {',
+                    '    int n = arr.size();',
+                    '    for (int i = 0; i < n-1; i++) {',
+                    '        int minIdx = i;',
+                    '        for (int j = i+1; j < n; j++) {',
+                    '            if (arr[j] < arr[minIdx])', // compare
+                    '                minIdx = j;',
+                    '        }',
+                    '        swap(arr[minIdx], arr[i]);', // swap
+                    '    }',
+                    '}'
+                ],
+                insertion: [
+                    'void insertionSort(vector<int>& arr) {',
+                    '    int n = arr.size();',
+                    '    for (int i = 1; i < n; i++) {',
+                    '        int key = arr[i];',
+                    '        int j = i - 1;',
+                    '        while (j >= 0 && arr[j] > key) {', // compare
+                    '            arr[j + 1] = arr[j];', // swap
+                    '            j--;',
+                    '        }',
+                    '        arr[j + 1] = key;',
+                    '    }',
+                    '}'
+                ],
+                shell: [
+                    'void shellSort(vector<int>& arr) {',
+                    '    int n = arr.size();',
+                    '    for (int gap = n/2; gap > 0; gap /= 2) {',
+                    '        for (int i = gap; i < n; i++) {',
+                    '            int temp = arr[i];',
+                    '            int j;',
+                    '            for (j = i; j >= gap && arr[j-gap] > temp; j -= gap)', // compare
+                    '                arr[j] = arr[j - gap];', // swap
+                    '            arr[j] = temp;',
+                    '        }',
+                    '    }',
+                    '}'
+                ],
+                merge: [
+                    'void merge(vector<int>& arr, int l, int m, int r) {',
+                    '    vector<int> L(arr.begin() + l, arr.begin() + m + 1);',
+                    '    vector<int> R(arr.begin() + m + 1, arr.begin() + r + 1);',
+                    '    int i = 0, j = 0, k = l;',
+                    '    while (i < L.size() && j < R.size())', // compare
+                    '        arr[k++] = (L[i] <= R[j]) ? L[i++] : R[j++];', // swap
+                    '    while (i < L.size()) arr[k++] = L[i++];',
+                    '    while (j < R.size()) arr[k++] = R[j++];',
+                    '}',
+                    'void mergeSort(vector<int>& arr, int l, int r) {',
+                    '    if (l < r) {',
+                    '        int m = l + (r - l) / 2;',
+                    '        mergeSort(arr, l, m);',
+                    '        mergeSort(arr, m + 1, r);',
+                    '        merge(arr, l, m, r);',
+                    '    }',
+                    '}'
+                ],
+                quick: [
+                    'int partition(vector<int>& arr, int low, int high) {',
+                    '    int pivot = arr[high];',
+                    '    int i = low - 1;',
+                    '    for (int j = low; j < high; j++) {',
+                    '        if (arr[j] < pivot) {', // compare
+                    '            i++;',
+                    '            swap(arr[i], arr[j]);', // swap
+                    '        }',
+                    '    }',
+                    '    swap(arr[i + 1], arr[high]);',
+                    '    return i + 1;',
+                    '}',
+                    'void quickSort(vector<int>& arr, int low, int high) {',
+                    '    if (low < high) {',
+                    '        int pi = partition(arr, low, high);',
+                    '        quickSort(arr, low, pi - 1);',
+                    '        quickSort(arr, pi + 1, high);',
+                    '    }',
+                    '}'
+                ],
+                heap: [
+                    'void heapify(vector<int>& arr, int n, int i) {',
+                    '    int largest = i, l = 2*i + 1, r = 2*i + 2;',
+                    '    if (l < n && arr[l] > arr[largest]) largest = l;', // compare
+                    '    if (r < n && arr[r] > arr[largest]) largest = r;',
+                    '    if (largest != i) {',
+                    '        swap(arr[i], arr[largest]);', // swap
+                    '        heapify(arr, n, largest);',
+                    '    }',
+                    '}',
+                    'void heapSort(vector<int>& arr) {',
+                    '    int n = arr.size();',
+                    '    for (int i = n/2 - 1; i >= 0; i--)',
+                    '        heapify(arr, n, i);',
+                    '    for (int i = n-1; i > 0; i--) {',
+                    '        swap(arr[0], arr[i]);',
+                    '        heapify(arr, i, 0);',
+                    '    }',
+                    '}'
+                ],
+                counting: [
+                    'void countingSort(vector<int>& arr) {',
+                    '    int max = *max_element(arr.begin(), arr.end());',
+                    '    vector<int> count(max + 1, 0), output(arr.size());',
+                    '    for (int num : arr) count[num]++;',
+                    '    for (int i = 1; i <= max; i++) count[i] += count[i-1];',
+                    '    for (int i = arr.size()-1; i >= 0; i--) {',
+                    '        output[count[arr[i]]-1] = arr[i];', // swap
+                    '        count[arr[i]]--;',
+                    '    }',
+                    '    arr = output;',
+                    '}'
+                ],
+                bucket: [
+                    'void bucketSort(vector<int>& arr) {',
+                    '    int n = arr.size();',
+                    '    if (n <= 0) return;',
+                    '    int max = *max_element(arr.begin(), arr.end());',
+                    '    int min = *min_element(arr.begin(), arr.end());',
+                    '    int bucketCount = 10;',
+                    '    int bucketRange = (max - min) / bucketCount + 1;',
+                    '    vector<vector<int>> buckets(bucketCount);',
+                    '    for (int num : arr) {',
+                    '        int idx = (num - min) / bucketRange;',
+                    '        buckets[idx].push_back(num);',
+                    '    }',
+                    '    arr.clear();',
+                    '    for (auto& bucket : buckets) {',
+                    '        sort(bucket.begin(), bucket.end());', // sort
+                    '        arr.insert(arr.end(), bucket.begin(), bucket.end());',
+                    '    }',
+                    '}'
+                ],
+                radix: [
+                    'void countingSortByDigit(vector<int>& arr, int exp) {',
+                    '    int n = arr.size();',
+                    '    vector<int> output(n), count(10, 0);',
+                    '    for (int i = 0; i < n; i++)',
+                    '        count[(arr[i]/exp)%10]++;',
+                    '    for (int i = 1; i < 10; i++)',
+                    '        count[i] += count[i-1];',
+                    '    for (int i = n-1; i >= 0; i--) {',
+                    '        output[count[(arr[i]/exp)%10]-1] = arr[i];', // swap
+                    '        count[(arr[i]/exp)%10]--;',
+                    '    }',
+                    '    arr = output;',
+                    '}',
+                    'void radixSort(vector<int>& arr) {',
+                    '    int max = *max_element(arr.begin(), arr.end());',
+                    '    for (int exp = 1; max/exp > 0; exp *= 10)',
+                    '        countingSortByDigit(arr, exp);',
+                    '}'
+                ]
+            };
+            return templates[currentAlgorithm] || templates.bubble;
+        }
+        
+        // 更新实时代码显示
+        function updateLiveCodeDisplay(highlightLine = null, state = 'normal') {
+            const codeLines = getCppCodeTemplate();
+            const liveCodeDisplay = document.getElementById('live-code-display');
+            
+            if (!liveCodeDisplay) return;
+            
+            let html = '';
+            codeLines.forEach((line, index) => {
+                let lineClass = 'code-line';
+                let lineStyle = 'color: #d1d5db;'; // gray-300
+                
+                if (highlightLine !== null && index === highlightLine) {
+                    if (state === 'comparing') {
+                        lineClass += ' code-line-comparing';
+                        lineStyle = 'color: #fbbf24;'; // yellow for comparing
+                    } else if (state === 'swapping') {
+                        lineClass += ' code-line-swapping';
+                        lineStyle = 'color: #fca5a5;'; // red for swapping
+                    } else {
+                        lineClass += ' code-line-current';
+                        lineStyle = 'color: #93c5fd;'; // blue for current
+                    }
+                }
+                
+                html += `<span class="${lineClass}" style="${lineStyle}">${escapeHtml(line)}\n</span>`;
+            });
+            
+            liveCodeDisplay.innerHTML = html;
+        }
+        
+        // HTML转义
+        function escapeHtml(text) {
+            const map = {
+                '&': '&amp;',
+                '<': '&lt;',
+                '>': '&gt;',
+                '"': '&quot;',
+                "'": '&#039;'
+            };
+            return text.replace(/[&<>"']/g, m => map[m]);
+        }
+        
+        // 初始化实时代码显示
+        
         // 创建新数组
         function createNewArray() {
             resetSort();
@@ -1769,6 +2032,9 @@ func radixSort(_ arr: [Int]) -&gt; [Int] {
             
             // 重新渲染数组
             renderArray();
+            
+            // 重置实时代码显示
+            updateLiveCodeDisplay();
         }
         
         // 执行排序算法
@@ -1838,14 +2104,24 @@ func radixSort(_ arr: [Int]) -&gt; [Int] {
         // =========================
         function* bubbleSortGenerator() {
             const n = array.length;
+            updateLiveCodeDisplay(0); // function declaration
+            yield;
+            
             for (let i = 0; i < n - 1; i++) {
+                updateLiveCodeDisplay(2); // outer loop
+                yield;
+                
                 for (let j = 0; j < n - i - 1; j++) {
+                    updateLiveCodeDisplay(3); // inner loop
+                    yield;
+                    
                     comparisonCount++;
                     updateCounters();
                     
                     // 高亮显示正在比较的元素
                     const sortedIndices = Array.from({length: i}, (_, k) => n - 1 - k);
                     renderArray([j, j + 1], sortedIndices);
+                    updateLiveCodeDisplay(4, 'comparing'); // if condition
                     yield;
                     
                     if (array[j] > array[j + 1]) {
@@ -1854,6 +2130,7 @@ func radixSort(_ arr: [Int]) -&gt; [Int] {
                         updateCounters();
                         
                         renderArray([j, j + 1], sortedIndices);
+                        updateLiveCodeDisplay(5, 'swapping'); // swap operation
                         yield;
                     }
                 }
@@ -1865,19 +2142,33 @@ func radixSort(_ arr: [Int]) -&gt; [Int] {
         // =========================
         function* selectionSortGenerator() {
             const n = array.length;
+            updateLiveCodeDisplay(0); // function declaration
+            yield;
+            
             for (let i = 0; i < n - 1; i++) {
+                updateLiveCodeDisplay(2); // outer loop
+                yield;
+                
                 let minIdx = i;
+                updateLiveCodeDisplay(3); // minIdx initialization
+                yield;
                 
                 for (let j = i + 1; j < n; j++) {
+                    updateLiveCodeDisplay(4); // inner loop
+                    yield;
+                    
                     comparisonCount++;
                     updateCounters();
                     
                     const sortedIndices = Array.from({length: i}, (_, k) => k);
                     renderArray([minIdx, j], sortedIndices);
+                    updateLiveCodeDisplay(5, 'comparing'); // if condition
                     yield;
                     
                     if (array[j] < array[minIdx]) {
                         minIdx = j;
+                        updateLiveCodeDisplay(6); // update minIdx
+                        yield;
                     }
                 }
                 
@@ -1888,6 +2179,7 @@ func radixSort(_ arr: [Int]) -&gt; [Int] {
                     
                     const sortedIndices = Array.from({length: i + 1}, (_, k) => k);
                     renderArray([i, minIdx], sortedIndices);
+                    updateLiveCodeDisplay(8, 'swapping'); // swap operation
                     yield;
                 }
             }
@@ -1898,9 +2190,19 @@ func radixSort(_ arr: [Int]) -&gt; [Int] {
         // =========================
         function* insertionSortGenerator() {
             const n = array.length;
+            updateLiveCodeDisplay(0); // function declaration
+            yield;
+            
             for (let i = 1; i < n; i++) {
+                updateLiveCodeDisplay(2); // outer loop
+                yield;
+                
                 let key = array[i];
+                updateLiveCodeDisplay(3); // key assignment
+                yield;
+                
                 let j = i - 1;
+                updateLiveCodeDisplay(4); // j initialization
                 
                 renderArray([i], Array.from({length: i}, (_, k) => k));
                 yield;
@@ -1909,14 +2211,20 @@ func radixSort(_ arr: [Int]) -&gt; [Int] {
                     comparisonCount++;
                     updateCounters();
                     
+                    updateLiveCodeDisplay(5, 'comparing'); // while condition
+                    yield;
+                    
                     array[j + 1] = array[j];
                     swapCount++;
                     updateCounters();
                     
                     renderArray([j, j + 1], Array.from({length: i}, (_, k) => k));
+                    updateLiveCodeDisplay(6, 'swapping'); // shift operation
                     yield;
                     
                     j--;
+                    updateLiveCodeDisplay(7); // decrement j
+                    yield;
                 }
                 
                 if (j >= 0) {
@@ -1925,6 +2233,7 @@ func radixSort(_ arr: [Int]) -&gt; [Int] {
                 }
                 
                 array[j + 1] = key;
+                updateLiveCodeDisplay(9); // place key
                 
                 renderArray([j + 1], Array.from({length: i + 1}, (_, k) => k));
                 yield;
@@ -1936,11 +2245,23 @@ func radixSort(_ arr: [Int]) -&gt; [Int] {
         // =========================
         function* shellSortGenerator() {
             const n = array.length;
+            updateLiveCodeDisplay(0); // function declaration
+            yield;
+            
             let gap = Math.floor(n / 2);
+            updateLiveCodeDisplay(2); // gap initialization
+            yield;
             
             while (gap > 0) {
+                updateLiveCodeDisplay(3); // while loop
+                yield;
+                
                 for (let i = gap; i < n; i++) {
+                    updateLiveCodeDisplay(4); // for loop
+                    yield;
+                    
                     let temp = array[i];
+                    updateLiveCodeDisplay(5); // temp assignment
                     let j = i;
                     
                     renderArray([i], []);
@@ -1950,11 +2271,15 @@ func radixSort(_ arr: [Int]) -&gt; [Int] {
                         comparisonCount++;
                         updateCounters();
                         
+                        updateLiveCodeDisplay(7, 'comparing'); // while condition
+                        yield;
+                        
                         array[j] = array[j - gap];
                         swapCount++;
                         updateCounters();
                         
                         renderArray([j, j - gap], []);
+                        updateLiveCodeDisplay(8, 'swapping'); // shift operation
                         yield;
                         
                         j -= gap;
@@ -1966,6 +2291,7 @@ func radixSort(_ arr: [Int]) -&gt; [Int] {
                     }
                     
                     array[j] = temp;
+                    updateLiveCodeDisplay(9); // place temp
                     
                     renderArray([j], []);
                     yield;
@@ -1978,13 +2304,20 @@ func radixSort(_ arr: [Int]) -&gt; [Int] {
         // 归并排序
         // =========================
         function* mergeSortGenerator() {
+            updateLiveCodeDisplay(9); // mergeSort function
+            yield;
             yield* mergeSortHelper(0, array.length - 1);
         }
         
         function* mergeSortHelper(left, right) {
             if (left >= right) return;
             
+            updateLiveCodeDisplay(10); // if condition
+            yield;
+            
             const mid = Math.floor((left + right) / 2);
+            updateLiveCodeDisplay(11); // mid calculation
+            yield;
             
             yield* mergeSortHelper(left, mid);
             yield* mergeSortHelper(mid + 1, right);
@@ -1992,16 +2325,24 @@ func radixSort(_ arr: [Int]) -&gt; [Int] {
         }
         
         function* merge(left, mid, right) {
+            updateLiveCodeDisplay(0); // merge function
+            yield;
+            
             const leftArr = array.slice(left, mid + 1);
             const rightArr = array.slice(mid + 1, right + 1);
+            updateLiveCodeDisplay(1); // array slicing
+            yield;
             
             let i = 0, j = 0, k = left;
+            updateLiveCodeDisplay(3); // initialize indices
+            yield;
             
             while (i < leftArr.length && j < rightArr.length) {
                 comparisonCount++;
                 updateCounters();
                 
                 renderArray([k, left + i, mid + 1 + j], []);
+                updateLiveCodeDisplay(4, 'comparing'); // while condition
                 yield;
                 
                 if (leftArr[i] <= rightArr[j]) {
@@ -2013,6 +2354,8 @@ func radixSort(_ arr: [Int]) -&gt; [Int] {
                 }
                 swapCount++;
                 updateCounters();
+                updateLiveCodeDisplay(5, 'swapping'); // merge operation
+                yield;
                 k++;
             }
             
@@ -2022,6 +2365,7 @@ func radixSort(_ arr: [Int]) -&gt; [Int] {
                 updateCounters();
                 
                 renderArray([k], []);
+                updateLiveCodeDisplay(6, 'swapping'); // copy remaining
                 yield;
                 
                 i++;
@@ -2034,6 +2378,7 @@ func radixSort(_ arr: [Int]) -&gt; [Int] {
                 updateCounters();
                 
                 renderArray([k], []);
+                updateLiveCodeDisplay(7, 'swapping'); // copy remaining
                 yield;
                 
                 j++;
@@ -2045,26 +2390,45 @@ func radixSort(_ arr: [Int]) -&gt; [Int] {
         // 快速排序
         // =========================
         function* quickSortGenerator() {
+            updateLiveCodeDisplay(12); // quickSort function
             yield* quickSortHelper(0, array.length - 1);
         }
         
         function* quickSortHelper(low, high) {
             if (low < high) {
+                updateLiveCodeDisplay(13); // if condition
+                yield;
+                
                 const pi = yield* partition(low, high);
+                updateLiveCodeDisplay(14); // partition call
+                yield;
+                
                 yield* quickSortHelper(low, pi - 1);
                 yield* quickSortHelper(pi + 1, high);
             }
         }
         
         function* partition(low, high) {
+            updateLiveCodeDisplay(0); // partition function
+            yield;
+            
             const pivot = array[high];
+            updateLiveCodeDisplay(1); // pivot assignment
+            yield;
+            
             let i = low - 1;
+            updateLiveCodeDisplay(2); // i initialization
+            yield;
             
             for (let j = low; j < high; j++) {
+                updateLiveCodeDisplay(3); // for loop
+                yield;
+                
                 comparisonCount++;
                 updateCounters();
                 
                 renderArray([j, high], []);
+                updateLiveCodeDisplay(4, 'comparing'); // if condition
                 yield;
                 
                 if (array[j] < pivot) {
@@ -2074,6 +2438,7 @@ func radixSort(_ arr: [Int]) -&gt; [Int] {
                     updateCounters();
                     
                     renderArray([i, j], []);
+                    updateLiveCodeDisplay(6, 'swapping'); // swap
                     yield;
                 }
             }
@@ -2083,6 +2448,7 @@ func radixSort(_ arr: [Int]) -&gt; [Int] {
             updateCounters();
             
             renderArray([i + 1, high], []);
+            updateLiveCodeDisplay(9, 'swapping'); // final swap
             yield;
             
             return i + 1;
@@ -2093,19 +2459,27 @@ func radixSort(_ arr: [Int]) -&gt; [Int] {
         // =========================
         function* heapSortGenerator() {
             const n = array.length;
+            updateLiveCodeDisplay(9); // heapSort function
+            yield;
             
             // 构建最大堆
             for (let i = Math.floor(n / 2) - 1; i >= 0; i--) {
+                updateLiveCodeDisplay(11); // build heap loop
+                yield;
                 yield* heapify(n, i);
             }
             
             // 一个个从堆顶取出元素
             for (let i = n - 1; i > 0; i--) {
+                updateLiveCodeDisplay(13); // extract max loop
+                yield;
+                
                 [array[0], array[i]] = [array[i], array[0]];
                 swapCount++;
                 updateCounters();
                 
                 renderArray([0, i], Array.from({length: n - i}, (_, k) => n - 1 - k));
+                updateLiveCodeDisplay(14, 'swapping'); // swap with last
                 yield;
                 
                 yield* heapify(i, 0);
@@ -2113,13 +2487,21 @@ func radixSort(_ arr: [Int]) -&gt; [Int] {
         }
         
         function* heapify(n, i) {
+            updateLiveCodeDisplay(0); // heapify function
+            yield;
+            
             let largest = i;
             const left = 2 * i + 1;
             const right = 2 * i + 2;
+            updateLiveCodeDisplay(1); // initialize indices
+            yield;
             
             if (left < n) {
                 comparisonCount++;
                 updateCounters();
+                updateLiveCodeDisplay(2, 'comparing'); // compare with left
+                yield;
+                
                 if (array[left] > array[largest]) {
                     largest = left;
                 }
@@ -2128,17 +2510,24 @@ func radixSort(_ arr: [Int]) -&gt; [Int] {
             if (right < n) {
                 comparisonCount++;
                 updateCounters();
+                updateLiveCodeDisplay(3, 'comparing'); // compare with right
+                yield;
+                
                 if (array[right] > array[largest]) {
                     largest = right;
                 }
             }
             
             if (largest !== i) {
+                updateLiveCodeDisplay(4); // check if swap needed
+                yield;
+                
                 [array[i], array[largest]] = [array[largest], array[i]];
                 swapCount++;
                 updateCounters();
                 
                 renderArray([i, largest], []);
+                updateLiveCodeDisplay(5, 'swapping'); // swap
                 yield;
                 
                 yield* heapify(n, largest);
@@ -2149,16 +2538,25 @@ func radixSort(_ arr: [Int]) -&gt; [Int] {
         // 计数排序
         // =========================
         function* countingSortGenerator() {
+            updateLiveCodeDisplay(0); // countingSort function
+            yield;
+            
             const max = Math.max(...array);
             const min = Math.min(...array);
             const range = max - min + 1;
             const count = new Array(range).fill(0);
             const output = new Array(array.length);
+            updateLiveCodeDisplay(1); // initialization
+            yield;
             
             // 统计每个元素出现次数
             for (let i = 0; i < array.length; i++) {
+                updateLiveCodeDisplay(3); // count loop
+                yield;
+                
                 count[array[i] - min]++;
                 renderArray([i], []);
+                updateLiveCodeDisplay(4); // increment count
                 yield;
             }
             
@@ -2166,15 +2564,21 @@ func radixSort(_ arr: [Int]) -&gt; [Int] {
             for (let i = 1; i < count.length; i++) {
                 count[i] += count[i - 1];
             }
+            updateLiveCodeDisplay(5); // cumulative count
+            yield;
             
             // 构建输出数组
             for (let i = array.length - 1; i >= 0; i--) {
+                updateLiveCodeDisplay(6); // build output loop
+                yield;
+                
                 output[count[array[i] - min] - 1] = array[i];
                 count[array[i] - min]--;
                 swapCount++;
                 updateCounters();
                 
                 renderArray([i], []);
+                updateLiveCodeDisplay(7, 'swapping'); // place element
                 yield;
             }
             
@@ -2182,6 +2586,7 @@ func radixSort(_ arr: [Int]) -&gt; [Int] {
             for (let i = 0; i < array.length; i++) {
                 array[i] = output[i];
                 renderArray([i], Array.from({length: i + 1}, (_, k) => k));
+                updateLiveCodeDisplay(9, 'swapping'); // copy back
                 yield;
             }
         }
@@ -2193,19 +2598,28 @@ func radixSort(_ arr: [Int]) -&gt; [Int] {
             const n = array.length;
             if (n <= 0) return;
             
+            updateLiveCodeDisplay(0); // bucketSort function
+            yield;
+            
             const bucketCount = Math.max(5, Math.floor(n / 5));
             const buckets = Array.from({length: bucketCount}, () => []);
             
             const max = Math.max(...array);
             const min = Math.min(...array);
             const bucketSize = Math.ceil((max - min + 1) / bucketCount);
+            updateLiveCodeDisplay(1); // initialization
+            yield;
             
             // 分配元素到桶
             for (let i = 0; i < n; i++) {
+                updateLiveCodeDisplay(8); // distribute loop
+                yield;
+                
                 const bucketIndex = Math.min(Math.floor((array[i] - min) / bucketSize), bucketCount - 1);
                 buckets[bucketIndex].push(array[i]);
                 
                 renderArray([i], []);
+                updateLiveCodeDisplay(9); // push to bucket
                 yield;
             }
             
@@ -2213,7 +2627,12 @@ func radixSort(_ arr: [Int]) -&gt; [Int] {
             let index = 0;
             for (let i = 0; i < bucketCount; i++) {
                 if (buckets[i].length > 0) {
+                    updateLiveCodeDisplay(13); // merge loop
+                    yield;
+                    
                     buckets[i].sort((a, b) => a - b);
+                    updateLiveCodeDisplay(14); // sort bucket
+                    yield;
                     
                     for (let j = 0; j < buckets[i].length; j++) {
                         array[index] = buckets[i][j];
@@ -2221,6 +2640,7 @@ func radixSort(_ arr: [Int]) -&gt; [Int] {
                         updateCounters();
                         
                         renderArray([index], Array.from({length: index + 1}, (_, k) => k));
+                        updateLiveCodeDisplay(15, 'swapping'); // copy back
                         yield;
                         
                         index++;
@@ -2233,24 +2653,40 @@ func radixSort(_ arr: [Int]) -&gt; [Int] {
         // 基数排序
         // =========================
         function* radixSortGenerator() {
+            updateLiveCodeDisplay(13); // radixSort function
+            yield;
+            
             const max = Math.max(...array);
+            updateLiveCodeDisplay(14); // find max
+            yield;
             
             for (let exp = 1; Math.floor(max / exp) > 0; exp *= 10) {
+                updateLiveCodeDisplay(15); // exp loop
+                yield;
                 yield* countingSortByDigit(exp);
             }
         }
         
         function* countingSortByDigit(exp) {
+            updateLiveCodeDisplay(0); // countingSortByDigit function
+            yield;
+            
             const n = array.length;
             const output = new Array(n);
             const count = new Array(10).fill(0);
+            updateLiveCodeDisplay(1); // initialization
+            yield;
             
             // 统计每个数字出现次数
             for (let i = 0; i < n; i++) {
+                updateLiveCodeDisplay(3); // count digits loop
+                yield;
+                
                 const digit = Math.floor(array[i] / exp) % 10;
                 count[digit]++;
                 
                 renderArray([i], []);
+                updateLiveCodeDisplay(4); // increment count
                 yield;
             }
             
@@ -2258,9 +2694,14 @@ func radixSort(_ arr: [Int]) -&gt; [Int] {
             for (let i = 1; i < 10; i++) {
                 count[i] += count[i - 1];
             }
+            updateLiveCodeDisplay(6); // cumulative count
+            yield;
             
             // 构建输出数组
             for (let i = n - 1; i >= 0; i--) {
+                updateLiveCodeDisplay(7); // build output loop
+                yield;
+                
                 const digit = Math.floor(array[i] / exp) % 10;
                 output[count[digit] - 1] = array[i];
                 count[digit]--;
@@ -2268,6 +2709,7 @@ func radixSort(_ arr: [Int]) -&gt; [Int] {
                 updateCounters();
                 
                 renderArray([i], []);
+                updateLiveCodeDisplay(8, 'swapping'); // place element
                 yield;
             }
             
@@ -2275,6 +2717,7 @@ func radixSort(_ arr: [Int]) -&gt; [Int] {
             for (let i = 0; i < n; i++) {
                 array[i] = output[i];
                 renderArray([i], []);
+                updateLiveCodeDisplay(11, 'swapping'); // copy back
                 yield;
             }
         }
