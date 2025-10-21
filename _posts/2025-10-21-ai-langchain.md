@@ -39,7 +39,7 @@ Langchain多任务工具链组合设计。用到的tools（serpApi，llm-math）
 
 
 <details>
-  <summary>点击展开代码（Python 示例）</summary>
+  <summary>点击展开代码（Python 示例）222</summary>
 
   ```python
   def calculate_sum(a, b):
