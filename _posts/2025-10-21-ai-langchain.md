@@ -9,6 +9,29 @@ description: "本文详细介绍 AI langchain多任务如何使用"  # 文章描
 Langchain多任务工具链组合设计。用到的tools（serpApi，llm-math）。使用LCEL构建任务链。
 ![](./images/WP20251021134052.png)
 
+{% codeblock python fold:true title:"Python 折叠示例" %}
+def add(a, b):
+    return a + b
+{% endcodeblock %}
+
+
+{% codeblock python fold:true title:"Python 折叠示例" %}
+```python
+  def calculate_sum(a, b):
+      """计算两个数的和"""
+      return a + b
+
+  # 测试示例
+  if __name__ == "__main__":
+      num1 = 10
+      num2 = 20
+      result = calculate_sum(num1, num2)
+      print(f"{num1} + {num2} = {result}")  # 输出：10 + 20 = 30
+
+```
+{% endcodeblock %}
+
+
 <details>
   <summary>点击展开代码（Python 示例）</summary>
 
@@ -32,7 +55,7 @@ Langchain多任务工具链组合设计。用到的tools（serpApi，llm-math）
 <details>
   <summary>点击展开代码（Python 示例）222</summary>
 
-  ```python
+  ```python 
   def calculate_sum(a, b):
       """计算两个数的和"""
       return a + b
@@ -43,6 +66,7 @@ Langchain多任务工具链组合设计。用到的tools（serpApi，llm-math）
       num2 = 20
       result = calculate_sum(num1, num2)
       print(f"{num1} + {num2} = {result}")  # 输出：10 + 20 = 30
+
   ```  
 
 </details>

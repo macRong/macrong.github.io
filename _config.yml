@@ -42,6 +42,8 @@ plugins:
   - jekyll-paginate   # 分页功能
   - jekyll-seo-tag    # 自动生成SEO标签（标题、描述等）
   - jekyll-feed       # 生成RSS订阅源
+  - jekyll-code-blocks
+
 
 # _config.yml
 show_excerpts: true  # 显示摘要（默认 false）
