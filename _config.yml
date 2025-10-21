@@ -46,8 +46,8 @@ plugins:
 
 # _config.yml
 show_excerpts: true  # 显示摘要（默认 false）
-# excerpt_separator: "\n\n"  # 按空行分割摘要（默认）
-# excerpt_length: 100  # 限制摘要长度为 100 字符（仅对自动摘要生效）
+excerpt_separator: "\n\n"  # 按空行分割摘要（默认）
+excerpt_length: 100  # 限制摘要长度为 100 字符（仅对自动摘要生效）
 
 future: true  # 默认为 false，设为 true 则显示未来时间的文章
 

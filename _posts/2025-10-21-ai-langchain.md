@@ -8,9 +8,10 @@ description: "本文详细介绍 AI langchain多任务如何使用"  # 文章描
 
 Langchain多任务工具链组合设计。用到的tools（serpApi，llm-math）。使用LCEL构建任务链。
 
+<!-- more -->  
 
 
-![](./images/WP20251021134052.png)
+![]({{ site.baseurl }}/images/WP20251021134052.png)
 
 一、使用prompt & llm
 
