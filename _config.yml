@@ -36,23 +36,12 @@ social_links:
   - { platform: Twitter, user_url: "https://twitter.com/colinluckyrong" }  # 首字母大写
   - { platform: Rss, user_url: "https://macrong.github.io/feed.xml" }  # 首字母大写
 
-# 代码块配置（可选）
-code_blocks:
-  # 默认折叠状态（true：默认折叠，false：默认展开）
-  default_fold: true
-  # 显示行号（true/false）
-  line_numbers: false
-  # 显示复制按钮（true/false）
-  copy_button: true
-  # 语法高亮主题（支持 "default"、"github"、"tomorrow" 等）
-  theme: "github"
 
 # 启用的插件（GitHub Pages 已内置支持）
 plugins:
   - jekyll-paginate   # 分页功能
   - jekyll-seo-tag    # 自动生成SEO标签（标题、描述等）
   - jekyll-feed       # 生成RSS订阅源
-  - jekyll-code-blocks
 
 
 # _config.yml
