@@ -118,7 +118,7 @@ agent.run("今天是几月几号?历史上的今天有哪些名人出生？")
 
 {% capture myfold %}
 
-[log](https://github.com/macRong/macrong.github.io/blob/main/_posts/20251021ailangchain-log.txt)
+[log](https://github.com/macRong/macrong.github.io/blob/main/_posts/log/20251021ailangchain-log.txt)
 
 
 {% endcapture %}
