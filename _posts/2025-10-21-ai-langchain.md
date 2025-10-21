@@ -28,15 +28,6 @@ Langchain多任务工具链组合设计。用到的tools（serpApi，llm-math）
 </details>
 
 
-<details open>  <!-- 默认展开 -->
-  <summary>默认展开的代码</summary>
-
-```python
-  print("默认展示的代码")
-</details>
-
-```
-
 
 <details>
   <summary>点击展开代码（Python 示例）222</summary>
@@ -53,6 +44,7 @@ Langchain多任务工具链组合设计。用到的tools（serpApi，llm-math）
       result = calculate_sum(num1, num2)
       print(f"{num1} + {num2} = {result}")  # 输出：10 + 20 = 30
   ```  
+
 </details>
 
 
