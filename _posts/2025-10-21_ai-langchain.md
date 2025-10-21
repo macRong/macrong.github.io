@@ -1,7 +1,7 @@
 ---
 layout: post
 title: "Langchain多任务处理"
-date: 2025-10-21 15:00:00  # 日期必须是当前或过去
+date: 2025-10-21 06:00:00  # 日期必须是当前或过去
 tags: [langchain, AI]      # 标签（可多个）
 description: "本文详细介绍 AI langchain多任务如何使用"  # 文章描述（用于SEO和列表页）
 ---
