@@ -10,6 +10,39 @@ Langchain多任务工具链组合设计。用到的tools（serpApi，llm-math）
 ![](./images/WP20251021134052.png)
 
 
+{% capture myfold %}
+这里是说明文字。
+
+```bash
+# 这是 shell 示例
+echo "hello world"
+
+
+更多文本。
+{% endcapture %}
+
+
+{% capture myfold %}
+这是折叠内的普通 Markdown 文本，可以有段落、列表等。
+
+下面是一个 fenced code block（会被正确高亮）：
+
+```bash
+# 这是 bash 示例
+echo "hello world"
+# 如果想写包含大括号或 Liquid 标签，见下方注意事项
+
+你还可以放图片：
+
+更多 Markdown 内容。
+
+{% endcapture %}
+
+{% include fold.html title="点击查看示例代码和说明" content=myfold %}
+
+
+
+
 
 
 
