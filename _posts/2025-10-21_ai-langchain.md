@@ -12,7 +12,7 @@ Langchain多任务工具链组合设计。用到的tools（serpApi，llm-math）
 <details>
   <summary>点击展开代码（Python 示例）</summary>
 
-  ```python
+```python
   def calculate_sum(a, b):
       """计算两个数的和"""
       return a + b
