@@ -9,6 +9,12 @@ description: "本文详细介绍 AI langchain多任务如何使用"  # 文章描
 Langchain多任务工具链组合设计。用到的tools（serpApi，llm-math）。使用LCEL构建任务链。
 ![](./images/WP20251021134052.png)
 
+
+{% include fold.html title="点击查看详情" content="
+这里是被折叠的内容。  
+可以写 Markdown。
+" %}
+
 {% codeblock python fold:true title:"Python 折叠示例" %}
 def add(a, b):
     return a + b
