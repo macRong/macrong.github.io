@@ -9,65 +9,6 @@ description: "本文详细介绍 AI langchain多任务如何使用"  # 文章描
 Langchain多任务工具链组合设计。用到的tools（serpApi，llm-math）。使用LCEL构建任务链。
 ![](./images/WP20251021134052.png)
 
-
-{% capture myfold %}
-这里是说明文字。
-
-更多文本。
-{% endcapture %}
-
-
-{% capture myfold %}
-这是折叠内的普通 Markdown 文本，可以有段落、列表等。
-
-下面是一个 fenced code block（会被正确高亮）：
-
-
-```python
-  def calculate_sum(a, b):
-      """计算两个数的和"""
-      return a + b
-
-  # 测试示例
-  if __name__ == "__main__":
-      num1 = 10
-      num2 = 20
-      result = calculate_sum(num1, num2)
-      print(f"{num1} + {num2} = {result}")  # 输出：10 + 20 = 30
-
-```
-
-{% endcapture %}
-
-{% include fold.html title="点击查看示例代码和说明" content=myfold %}
-
-
-
-
-
-
-
-<details>
-  <summary>点击展开代码（Python 示例）</summary>
-
-```python
-  def calculate_sum(a, b):
-      """计算两个数的和"""
-      return a + b
-
-  # 测试示例
-  if __name__ == "__main__":
-      num1 = 10
-      num2 = 20
-      result = calculate_sum(num1, num2)
-      print(f"{num1} + {num2} = {result}")  # 输出：10 + 20 = 30
-
-```
-</details>
-
-
-
-
 一、prompt | llm
 
 ```python
@@ -101,6 +42,9 @@ print(result1)
 
 ```
 输出
+
+{% capture myfold %}
+
 ```txt
 ### English Names:
 1. **CodeNova** – Suggests new, innovative code solutions.
@@ -125,6 +69,8 @@ print(result1)
 - Ensure it’s not already trademarked.
 - Consider your niche (e.g., mobile apps, enterprise software, AI).
 ```
+{% endcapture %}
+{% include fold.html title="点击查看示例代码和说明" content=myfold %}
 
 二、
 
@@ -169,3 +115,9 @@ agent = initialize_agent(tools, llm, agent=AgentType.ZERO_SHOT_REACT_DESCRIPTION
 # 运行 agent
 agent.run("今天是几月几号?历史上的今天有哪些名人出生？")
 ```
+
+{% capture myfold %}
+
+aaaa
+{% endcapture %}
+{% include fold.html title="点击查看示例代码和说明" content=myfold %}
