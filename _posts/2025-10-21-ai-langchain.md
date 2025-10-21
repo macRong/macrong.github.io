@@ -7,6 +7,9 @@ description: "本文详细介绍 AI langchain多任务如何使用"  # 文章描
 ---
 
 Langchain多任务工具链组合设计。用到的tools（serpApi，llm-math）。使用LCEL构建任务链。
+
+<!-- more -->  <!-- 关键分割线：此线之前是摘要，之后是正文（可放图片） -->
+
 ![](./images/WP20251021134052.png)
 
 一、使用prompt & llm
@@ -158,15 +161,6 @@ agent = initialize_agent(tools, llm, agent=AgentType.ZERO_SHOT_REACT_DESCRIPTION
 # 运行 agent
 result = agent.invoke({"input": "当前北京的温度是多少华氏度？这个温度的1/4是多少"})
 print(result)
-
-
-# In[7]:
-
-
-#help(load_tools)
-# import langchain_community
-# help(langchain_community.llms)
-
 ```
 
 {% capture myfold %}
@@ -178,5 +172,47 @@ Thought:...
 {'input': '当前北京的温度是多少华氏度？这个温度的1/4是多少', 'output': '当前北京的温度约为55.4华氏度，这个温度的1/4是13.85华氏度。'}
 {% endcapture %}
 {% include fold.html title="展开查看输出" content=myfold %}
+
+四、ConversationChain
+
+```python
+#!/usr/bin/env python
+# coding: utf-8
+
+# In[1]:
+
+
+import os
+from langchain.agents import load_tools
+from langchain.agents import initialize_agent
+from langchain_community.llms import Tongyi  # 导入通义千问Tongyi模型
+from langchain.agents import AgentType
+from langchain import ConversationChain
+import dashscope
+
+# 从环境变量获取 dashscope 的 API Key
+api_key = "sk-3fe8544"
+dashscope.api_key = api_key
+
+# 加载 Tongyi 模型
+llm = Tongyi(model_name="qwen-turbo", dashscope_api_key=api_key)  # 使用通义千问qwen-turbo模型
+# 使用带有memory的ConversationChain
+conversation = ConversationChain(llm=llm, verbose=True)
+
+output = conversation.predict(input="Hi there!")
+print(output)
+
+
+# In[2]:
+output = conversation.predict(input="I'm doing well! Just having a conversation with an AI.")
+print(output)
+```
+{% capture myfold %}
+
+[log](https://github.com/macRong/macrong.github.io/blob/main/_posts/log/20251021ailangchain-4-log.txt)
+
+{% endcapture %}
+{% include fold.html title="展开查看输出" content=myfold %}
+
 
 
