@@ -10,32 +10,7 @@ Langchain多任务工具链组合设计。用到的tools（serpApi，llm-math）
 ![](./images/WP20251021134052.png)
 
 
-{% include fold.html title="点击查看详情" content="
-这里是被折叠的内容。  
-可以写 Markdown。
-" %}
 
-{% codeblock python fold:true title:"Python 折叠示例" %}
-def add(a, b):
-    return a + b
-{% endcodeblock %}
-
-
-{% codeblock python fold:true title:"Python 折叠示例" %}
-```python
-  def calculate_sum(a, b):
-      """计算两个数的和"""
-      return a + b
-
-  # 测试示例
-  if __name__ == "__main__":
-      num1 = 10
-      num2 = 20
-      result = calculate_sum(num1, num2)
-      print(f"{num1} + {num2} = {result}")  # 输出：10 + 20 = 30
-
-```
-{% endcodeblock %}
 
 
 <details>
