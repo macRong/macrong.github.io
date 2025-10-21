@@ -13,11 +13,6 @@ Langchain多任务工具链组合设计。用到的tools（serpApi，llm-math）
 {% capture myfold %}
 这里是说明文字。
 
-```bash
-# 这是 shell 示例
-echo "hello world"
-
-
 更多文本。
 {% endcapture %}
 
@@ -27,14 +22,20 @@ echo "hello world"
 
 下面是一个 fenced code block（会被正确高亮）：
 
-```bash
-# 这是 bash 示例
-echo "hello world"
-# 如果想写包含大括号或 Liquid 标签，见下方注意事项
 
-你还可以放图片：
+```python
+  def calculate_sum(a, b):
+      """计算两个数的和"""
+      return a + b
 
-更多 Markdown 内容。
+  # 测试示例
+  if __name__ == "__main__":
+      num1 = 10
+      num2 = 20
+      result = calculate_sum(num1, num2)
+      print(f"{num1} + {num2} = {result}")  # 输出：10 + 20 = 30
+
+```
 
 {% endcapture %}
 
@@ -64,26 +65,6 @@ echo "hello world"
 ```
 </details>
 
-
-
-<details>
-  <summary>点击展开代码（Python 示例）222</summary>
-
-  ```python 
-  def calculate_sum(a, b):
-      """计算两个数的和"""
-      return a + b
-
-  # 测试示例
-  if __name__ == "__main__":
-      num1 = 10
-      num2 = 20
-      result = calculate_sum(num1, num2)
-      print(f"{num1} + {num2} = {result}")  # 输出：10 + 20 = 30
-
-  ```  
-
-</details>
 
 
 
