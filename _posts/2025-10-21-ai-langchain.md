@@ -120,5 +120,8 @@ agent.run("今天是几月几号?历史上的今天有哪些名人出生？")
 
 ![log](https://github.com/macRong/macrong.github.io/blob/main/_posts/20251021ailangchain-log.txt)
 
+查看 [log](20251021ailangchain-log.txt) 了解详细步骤。
+
+
 {% endcapture %}
 {% include fold.html title="展开查看" content=myfold %}
