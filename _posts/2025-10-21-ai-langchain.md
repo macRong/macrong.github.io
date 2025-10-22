@@ -7,6 +7,11 @@ description: "本文详细介绍 AI langchain多任务如何使用"  # 文章描
 ---
 
 Langchain多任务工具链组合设计。用到的tools（serpApi，llm-math）。使用LCEL构建任务链。
+ReAct框架：使用LangChain的ReAct框架，允许代理执行思考-行动-观察的循环：
+1. **思考**：分析任务，确定下一步行动
+2. **行动**：调用适当的工具
+3. **观察**：分析工具返回的结果
+4. **重复**：根据观察结果继续思考，直到任务完成
 
 <!-- more -->  
 
@@ -174,7 +179,7 @@ Thought:...
 {% endcapture %}
 {% include fold.html title="展开查看输出" content=myfold %}
 
-四、ConversationChain
+四、ConversationChain,Memory
 
 ```python
 #!/usr/bin/env python
