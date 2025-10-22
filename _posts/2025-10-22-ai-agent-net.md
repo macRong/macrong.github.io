@@ -9,6 +9,8 @@ description: "本文详细介绍 AI 网络故障诊断Agent项目逻辑"  # 文�
 
 本文档详细介绍了  [network_diagnosis_agent](https://github.com/macRong/macrong.github.io/blob/main/_posts/code/network_diagnosis_agent.py)的项目逻辑，它是一个使用 LangChain 框架和大型语言模型（LLM）构建的网络故障诊断智能系统。
 
+<!-- more -->  
+
 ## 1. 项目概述
 
 该项目创建了一个智能 Agent，能够根据用户描述的网络问题，通过逻辑分析和工具调用，一步步诊断网络故障，最终给出可能的问题原因和解决方案。
